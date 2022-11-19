@@ -1,6 +1,6 @@
 import './App.css';
 import { useState, useEffect } from 'react'
-import UserTest from './components/usertest'
+import Landing from './components/landing'
 import Lobby from './components/lobby'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 
@@ -18,7 +18,6 @@ function App() {
   const [users,setUsers] = useState([])
   const [currentRoom,setCurrentRoom] = useState(null)
   console.log('-----------------------------------')
-  console.log(user,'user in app')
 
   const handleJoin = (room_id) =>  {
     handleLeave()
@@ -58,13 +57,18 @@ const socket_listeners = () => {
     setMsg(msg)
   });
 
-  socket.on('user_joined',(user_id) => {
-    const new_users=[...users,user_id]
-    console.log(new_users,'new_users')
-    setUsers(new_users)
+  socket.on('user_joined',(data) => {
+    if (user.id != data.user_id) {
+      const new_users=[...users,data.user_id]
+      setUsers(new_users)
+    } else {
+      setUsers([...data.existing_users,user.id])
+    }
+
   });
 
   socket.on('user_left',(user_id) => {
+    console.log(`user ${user_id} left`)
     if (user.id==user_id) {
       setUsers([])
     } else {
@@ -75,6 +79,7 @@ const socket_listeners = () => {
       setUsers(n)
     }
   })
+
 }
 
 socket_listeners()
@@ -120,20 +125,20 @@ socket_listeners()
     
   },[])
 
-  useEffect( () => {
-    console.log(user, '(user)')
+  // useEffect( () => {
+  //   console.log(user, '(user)')
 
-  },[user])
+  // },[user])
 
-  useEffect( () => {
-    console.log(users, '(users)')
-    console.log(isConnected)
-  },[users])
+  // useEffect( () => {
+  //   console.log(users, '(users)')
+  //   console.log(isConnected)
+  // },[users])
 
   return (
     <div className="App">
       <Routes>
-        <Route path='/' element={<UserTest user={user?.id} sendMessage={sendMessage} users={users} msg={msg} handleJoin={handleJoin} handleLeave={handleLeave}/>}/>
+        <Route path='/' element={<Landing user={user?.id} sendMessage={sendMessage} users={users} msg={msg} handleJoin={handleJoin} handleLeave={handleLeave}/>}/>
         <Route path='/:game_id/lobby' element={<Lobby user={user?.id} sendMessage={sendMessage} users={users} msg={msg} handleJoin={handleJoin} handleLeave={handleLeave}/>}/>
         {/* <Route path='/:game_id/play'/> */}
       </Routes>

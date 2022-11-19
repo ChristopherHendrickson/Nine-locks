@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 
 
 const Lobby = () =>{
-    const { game_id } = userParams()
+    const { game_id } = useParams()
     const navigate = useNavigate()
 
     return (

@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
-const UserTest = ({user, sendMessage, users, msg, handleJoin, handleLeave}) => {
+const Landing = ({user, sendMessage, users, msg, handleJoin, handleLeave}) => {
     const { room_id }=useParams()
     const [fields, setFields] = useState('')
     
@@ -53,4 +53,4 @@ const UserTest = ({user, sendMessage, users, msg, handleJoin, handleLeave}) => {
     )
 }
 
-export default UserTest
+export default Landing
