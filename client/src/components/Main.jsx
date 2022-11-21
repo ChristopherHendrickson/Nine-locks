@@ -61,7 +61,7 @@ const Main = ({user, setUser, msg, sendMessage, socket}) =>{
                 <Lobby user={user} users={users} socket={socket} currentRoom={currentRoom}></Lobby> 
             }
             {view == 'game' &&
-                <Game socket={socket} user={user} currentRoom={currentRoom}></Game>
+                <Game socket={socket} user={user} ></Game>
             }
             {view != 'join' && (
                     <>

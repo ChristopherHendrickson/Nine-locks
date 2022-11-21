@@ -19,6 +19,7 @@ const Chat = ({ socket, user, currentRoom }) => {
         e.preventDefault()
         if (text.length>0) {
             socket.emit('msg',{text:text,sender:user,room_id:currentRoom})
+            setText('')
         }
     }
 
@@ -32,7 +33,7 @@ const Chat = ({ socket, user, currentRoom }) => {
         <>
         <ul>
             {messages.map((m,i)=>{
-                return <li key={`${m.sender.id}${i}`}>{m.text} - {m.sender.username}</li>
+                return <li key={`${m.sender.id}${i}`}>{m.sender.username}: {m.text}</li>
             })}
         </ul>
         <form onSubmit={sendMessage}>

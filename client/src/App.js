@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Landing from './components/Landing'
 import Main from './components/Main'
 import { Routes, Route, useNavigate } from 'react-router-dom'
+import './App.css';
 
 import io from 'socket.io-client';
 const socket = io()
@@ -60,12 +61,6 @@ function App() {
 
 
   }, [])
-
-  useEffect(() => {
-    console.log(user.username, '(username)')
-    console.log(user.id, '(user id)')
-
-  }, [user])
 
 
   return (

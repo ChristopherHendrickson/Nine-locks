@@ -84,7 +84,7 @@ def join(data):
     sid = request.sid
 
     if room_id == user.get('id'):
-        socket.hosted_rooms[room_id] = {'host':user['id'],'start':False}
+        socket.hosted_rooms[room_id] = {'host':user['id'],'started':False}
 
 
     elif not socket.hosted_rooms.get(room_id):
@@ -93,7 +93,7 @@ def join(data):
 
     elif socket.hosted_rooms.get(room_id).get('started'):
         socket.emit('error',{'status':403,'message':'Can Not Join. Game Is In Progress'},to=sid)
-
+        return
 
     existing_users = [u['user'] for u in socket.sid_map.values() if u['room_id']==room_id]
     socket.emit('user_joined',{'user':user,'existing_users':existing_users,'room_id':room_id}, to=[room_id,sid])
@@ -159,8 +159,17 @@ def kick(data):
 @socket.on('start_game')
 def start_game(data):
     room_id = data['room_id']
-    socket.emit('start_game',to=data['room_id'])
+    socket.emit('start_game',to=room_id)
     socket.hosted_rooms.get(room_id)['started']=True
 
-# determine if room is created
-# add a host to a room
+@socket.on('init_game')
+def start_game(data):
+    room_id = data['room_id']
+    players = data['players']
+    init_deck = data['init_deck']
+    socket.emit('init_game',{'players':players,'init_deck':init_deck},to=room_id)
+    
+@socket.on('move')
+def move(data):
+    room_id = data['room_id']
+    socket.emit('move',data,to=room_id)
