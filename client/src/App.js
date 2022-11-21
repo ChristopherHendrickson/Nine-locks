@@ -1,110 +1,79 @@
 import { useState, useEffect } from 'react'
 import Landing from './components/Landing'
-import Game from './components/Game'
+import Main from './components/Main'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 
 import io from 'socket.io-client';
 const socket = io()
 
 function App() {
-
   // user {id: xxx, username: abc}
-  const [user,setUser] = useState({})
-  const [msg,setMsg] = useState('')
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [users,setUsers] = useState([])
+  const navigate = useNavigate()
+  const [user, setUser] = useState({})
+  const [errorMessage,setErrorMessage] = useState('')
 
 
-  const socket_listeners = () => {
-    socket.on('connect', () => {
-      setIsConnected(true);
-    });
-
-
-    socket.on('message',(msg)=>{  
-      setMsg(msg)
-    });
-
-    socket.on('user_joined',(data) => {
-      if (user.id != data.user.id) {
-        const new_users=[...users,data.user]
-        setUsers(new_users)
-      } else {
-        setUsers([...data.existing_users,user])
-      }
-
-    });
-
-    socket.on('user_left',(leaving_user) => {
-      console.log(`user ${leaving_user.id} left`)
-      if (user.id==leaving_user.id) {
-        setUsers([])
-      } else {
-        const new_users=[...users]
-        const n = new_users.filter((u)=>{
-          return u.id!=leaving_user.id
-        })
-        setUsers(n)
-      }
-    })
-
-  }
-
-  socket_listeners()
-  
-
-
-
-
-
-
-
-
-
-
-  useEffect( () => {
-
+  useEffect(() => {
     const register = async () => {
+      const stored_user = sessionStorage.getItem('user')
 
-      const res = await fetch("/api/register/", {
-        method: "POST",
+      if (stored_user) {
+        setUser(JSON.parse(stored_user))
+      } else {
+        const res = await fetch("/api/register/", {
+          method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-        
-        body: JSON.stringify({"username":''})
-      })
-      
-      const user_data = await res.json()
 
-      if (res.status===200) {
-        setUser(user_data.user) 
-        console.log('user id',user_data.user.id)
-      } else {
-        setUser(null)
+          body: JSON.stringify({ "username": '' })
+        })
+
+
+        const user_data = await res.json()
+
+        if (res.status === 200) {
+          setUser(user_data.user)
+          sessionStorage.setItem('user', JSON.stringify(user_data.user))
+        } else {
+          setUser(null)
+        }
       }
     }
-    
+
     register()
 
-    
-  },[])
+    socket.on('hosted_confirmation', (data) => {
+      navigate(`/${data.room_id}`)
+    })
 
-  // useEffect( () => {
-  //   console.log(user, '(user)')
+    socket.on('error', (data) => {
+      if (data.status == 404) {
 
-  // },[user])
+        setErrorMessage(data.message)
+        setTimeout(()=>{
+          setErrorMessage('')
+        },5000)
+        navigate('/')
+      }
+      
 
-  // useEffect( () => {
-  //   console.log(users, '(users)')
-  //   console.log(isConnected)
-  // },[users])
+    })
+
+  }, [])
+
+  useEffect(() => {
+    console.log(user.username, '(username)')
+    console.log(user.id, '(user id)')
+
+  }, [user])
+
 
   return (
     <div className="App">
       <Routes>
-        <Route path='/' element={<Landing user={user}/>}/>
-        <Route path='/:game_id/' element={<Game user={user} users={users} msg={msg} socket={socket}/>}/>
+        <Route path='/' element={<Landing user={user} socket={socket} errorMessage={errorMessage}/>} />
+        <Route path='/:game_id/' element={<Main user={user} setUser={setUser} socket={socket} />} />
       </Routes>
     </div>
   );
