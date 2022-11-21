@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import LeaveButton from "./LeaveButton"
+import all_cards_images from '../lib/cards/imageExport'
 
 const Game = ({ user, socket, currentRoom }) => {
 
@@ -7,6 +8,7 @@ const Game = ({ user, socket, currentRoom }) => {
         <>
         <p>GAME</p>
         <LeaveButton user={user} currentRoom={currentRoom} socket={socket}></LeaveButton>
+        
         </>
     )
 }
