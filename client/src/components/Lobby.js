@@ -5,7 +5,9 @@ import LeaveButton from './LeaveButton'
 const Lobby = ({user, users, socket, currentRoom}) =>{
     
     
-
+    const handleKick = (u) => {
+        socket.emit('kick',{user:u})
+    }
 
     const startGame = () => {
         socket.emit('start_game',{room_id:currentRoom})
@@ -16,15 +18,16 @@ const Lobby = ({user, users, socket, currentRoom}) =>{
         <p>connected users</p>
             <ul>
             {users.map((u)=>{
-                return <li key={u.id}>{u.username} - {u.id}</li>
+                return (
+                    <li key={u.id}>{u.username} - {u.id} {u.id!=user.id && user.id==currentRoom && <button onClick={() => {handleKick(u)}}>Kick</button>}</li>
+                )
             })}
             </ul>
-            <p>Lobby</p>
             
             { user.id==currentRoom &&
             <button onClick={startGame}>Start Game</button>
             }
-            <LeaveButton socket={socket} user={user} currentRoom={currentRoom}></LeaveButton>
+            <LeaveButton socket={socket} user={user}></LeaveButton>
         </>
     )
 }

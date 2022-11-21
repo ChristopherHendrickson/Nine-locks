@@ -12,12 +12,14 @@ const JoinGame = ({user, setUser, socket}) =>{
     const [username, setUsername] = useState('')
         
     useEffect(() => {
+        console.log(user)
         if (user.username){
             setUsername(user.username)
         }
-    })
+    },[user])
 
     const handleChange = (event) => {
+        event.preventDefault()
         setUsername(event.target.value)
     }
     const handleJoin = (room_id,new_user) =>  {
@@ -30,6 +32,7 @@ const JoinGame = ({user, setUser, socket}) =>{
         const new_user = {...user}
         new_user.username = username
         setUser(new_user)
+        sessionStorage.setItem('user',JSON.stringify(new_user))
         handleJoin(game_id,new_user)
     }
 

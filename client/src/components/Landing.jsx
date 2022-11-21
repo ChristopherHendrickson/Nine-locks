@@ -25,8 +25,10 @@ const Landing = ({user, errorMessage, socket }) => {
     }
 
     useEffect(()=>{
-        socket.emit('leave',{user:user})
-    })
+        if (user) {
+            socket.emit('leave',{current_user:user})
+        }
+    },[user])
 
     return (
         <>

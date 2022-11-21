@@ -84,17 +84,16 @@ def join(data):
     sid = request.sid
 
     if room_id == user.get('id'):
-        # shuld be creating the room. If host leaves then the game should be abandoned
-        socket.hosted_rooms[room_id] = user['id']
-        print('Hosting new room')
+        socket.hosted_rooms[room_id] = {'host':user['id'],'start':False}
+
 
     elif not socket.hosted_rooms.get(room_id):
-        print('room not hosted')
         socket.emit('error',{'status':404,'message':'Room Not Found'},to=sid)
         return    
 
+    elif socket.hosted_rooms.get(room_id).get('started'):
+        socket.emit('error',{'status':403,'message':'Can Not Join. Game Is In Progress'},to=sid)
 
-# 
 
     existing_users = [u['user'] for u in socket.sid_map.values() if u['room_id']==room_id]
     socket.emit('user_joined',{'user':user,'existing_users':existing_users,'room_id':room_id}, to=[room_id,sid])
@@ -110,7 +109,9 @@ def check_room_hosted(data):
     print('hitting check room hosted')
     if not socket.hosted_rooms.get(room_id):
         print('room not hosted')
-        socket.emit('error',{'status':404,'message':'Room Not Found'},to=sid)
+        socket.emit('error',{'status':404,'message':'Room Not Found'},to=sid)   
+    elif socket.hosted_rooms.get(room_id).get('started'):
+        socket.emit('error',{'status':403,'message':'Can Not Join. Game Is In Progress'},to=sid)      
     else:
         socket.emit('hosted_confirmation',{'status':200,'room_id':room_id},to=sid)
         
@@ -119,37 +120,47 @@ def check_room_hosted(data):
 def leave(data):
     print('--------------leave route---------------',request.sid,data)
     sid = request.sid
-    room_id = data.get('room_id')
-    print(room_id,'room_id')
+    room_id = socket.sid_map.get(sid).get('room_id')
     user = data.get('current_user')
     
     if room_id:
         socket.emit('user_left',user, to=room_id)
         leave_room(room_id)
-    else: # remove socket from any rooms that the sid_map thinks it is in. This is a fail safe, and should not actually happen
-        other_room_id = socket.sid_map.get(sid).get('room_id')
-        if other_room_id:
-            leave_room(other_room_id)
-
     
     
-    if room_id and room_id == user.get('id'):
+    if room_id == user.get('id'):
         socket.hosted_rooms.pop(room_id) # Room is no longer hosted
 
-        # iterate over all users in game, and tell them they have left, send an error message saying game was closed by host
+        # iterate over all users in game, and tell them host have left, send an error message saying game was closed by host
 
         users_to_kick = [(sid,u['user']) for sid,u in socket.sid_map.items() if (u['room_id']==room_id and u['user']['id']!=user['id'])]
         print(users_to_kick,'userstokick')  
         for u in users_to_kick:
             print('kicking user',u[1]['username'])
             socket.emit('user_left',u[1],to=u[0]) #kick all users in the room if the host leaves
-            socket.emit('error',{'status':404,'message':'Game Disbanded By Host'},to=u[0])
+            socket.emit('error',{'status':403,'message':'Game Disbanded By Host'},to=u[0])
+            # Users that are kicked will fire their own emit to 'leave', and disconnect from the socket room
+
     socket.sid_map[sid] = {'room_id':None,'user':None}
+
+@socket.on('kick')
+def kick(data):
+    kicked_user = data.get('user')
+    print(socket.sid_map)
+    for sid,val in socket.sid_map.items():
+        print(sid,val)
+        if val.get('user').get('id')==kicked_user.get('id'):
+            socket.emit('error',{'status':403,'message':'You Were Kicked By The Host'},to=sid)
+            break
+
+    
 
 
 @socket.on('start_game')
 def start_game(data):
+    room_id = data['room_id']
     socket.emit('start_game',to=data['room_id'])
+    socket.hosted_rooms.get(room_id)['started']=True
 
 # determine if room is created
 # add a host to a room

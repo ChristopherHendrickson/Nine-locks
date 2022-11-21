@@ -1,10 +1,10 @@
 
 
 
-const LeaveButton = ({ socket, user, currentRoom} ) =>{
+const LeaveButton = ({ socket, user} ) =>{
 
     const handleLeave = () => {
-        socket.emit("leave", {current_user:user,room_id:currentRoom})
+        socket.emit("leave", {current_user:user})
     }
 
     return (

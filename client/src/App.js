@@ -48,7 +48,7 @@ function App() {
     })
 
     socket.on('error', (data) => {
-      if (data.status == 404) {
+      if (data.status == 404 || data.status == 403) {
 
         setErrorMessage(data.message)
         setTimeout(()=>{
@@ -57,6 +57,7 @@ function App() {
         navigate('/')
       }
     })
+
 
   }, [])
 
