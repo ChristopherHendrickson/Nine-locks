@@ -53,11 +53,9 @@ function App() {
         setErrorMessage(data.message)
         setTimeout(()=>{
           setErrorMessage('')
-        },5000)
+        },4000)
         navigate('/')
       }
-      
-
     })
 
   }, [])

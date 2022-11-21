@@ -74,7 +74,7 @@ def handle_message(data):
     room=data['room_id']
     sender=data['sender']
     socket.emit('msg',{'text':text,'sender':sender},to=room)
-    
+    print('forwarding message')
 
 @socket.on('join')
 def join(data):
@@ -94,7 +94,7 @@ def join(data):
         return    
 
 
-
+# 
 
     existing_users = [u['user'] for u in socket.sid_map.values() if u['room_id']==room_id]
     socket.emit('user_joined',{'user':user,'existing_users':existing_users,'room_id':room_id}, to=[room_id,sid])
@@ -120,6 +120,7 @@ def leave(data):
     print('--------------leave route---------------',request.sid,data)
     sid = request.sid
     room_id = data.get('room_id')
+    print(room_id,'room_id')
     user = data.get('current_user')
     
     if room_id:
