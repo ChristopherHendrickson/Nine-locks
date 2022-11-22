@@ -1,14 +1,10 @@
-img {
-    max-height: 150px;
-    padding:0;
+body {
+    background-color: grey;
 }
 
 
 
-button {
-    margin:0;
-    padding:0;
-}
+
 
 
 .main {
@@ -26,16 +22,156 @@ button {
 
 
 
+.hand-wrap {
+    overflow: hidden;
+}
+
+.hand-wrap:last-child {
+    overflow: visible;
+}
+
+.hand-hidden, .hand-shown {
+    display: flex;
+    align-content: center;
+    max-width: 35em;
+
+}
+
+.card-btn {
+    padding:0;
+    border:0;
+    margin: 2px; 
+    /* background-color: red; */
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.card-img {
+    margin:0;
+    max-height: 10.5vh;
+    padding:0;
+    vertical-align: bottom;
+    border-radius: 5px;
+
+}
+
+.selected { 
+    opacity: 0.88;
+    background-color: red;
+}
 
 
+.game-grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr;
+    grid-template-rows: 2fr 3fr 2fr;
+    max-width:100%;
+    max-height:100%;
+}
+
+.player-area-0 {
+    grid-column: 2/3;
+    grid-row: 3/4;
+    display: flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items: center;
+    margin:0 auto;
+    max-width: 80%;
+}
+
+.player-area-1 {
+    grid-column: 3/4;
+    grid-row: 2/3;
+    display: flex;
+    flex-direction:column-reverse;
+    justify-content: center;
+    align-items: center;
+    margin:0 auto;
+    max-width: 80%;
+    transform: rotate(90deg)
+}
+
+.player-area-2 {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction:column-reverse;
+    margin:0 auto;
+    max-width: 80%;
+}
+
+.player-area-3 {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    display: flex;
+    flex-direction:column-reverse;
+    justify-content: center;
+    align-items: center;
+    margin:0 auto;
+    max-width: 80%;
+    transform: rotate(270deg)
+}
+
+.player-name {
+    margin:0;
+    font-weight: 1000;
+    font-size: 18px;
+}
+
+.player-info-0 {
+    grid-column: 2/3;
+    grid-row: 3/4;
+    display: flex;
+    justify-content:center;
+    align-items:flex-end;
+    padding:15px;
+    z-index:-1
+}
+
+.player-info-1 {
+    grid-column: 3/4;
+    grid-row: 2/3;
+    display: flex;
+    justify-content:flex-end;
+    align-items:center;
+    padding:15px;
+    z-index:-1
 
 
+}
+.player-info-1 .player-name {
+    transform: rotate(270deg);
+}
 
 
+.player-info-2 {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    display: flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:15px;
+    z-index:-1
 
+}
 
+.player-info-3 {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    display: flex;
+    flex-direction:column-reverse;
+    justify-content: center;
+    align-items: flex-start;
+    z-index:-1
 
+}
 
+.player-info-3 .player-name {
+    transform: rotate(90deg);
+}
 
 
 
@@ -49,7 +185,7 @@ button {
     right:0;
     top:0; */
     height:100vh;
-    width: 250px;
+    width: 100%;
     max-width: 650px;
     margin: 0px auto;
     background-color: rgb(24,24,26);
@@ -60,6 +196,7 @@ button {
     margin:0;
     position:relative;
     padding-left: 0px;
+    height:94vh;
     max-height: 94vh;
     overflow-y: auto;
 
@@ -83,9 +220,7 @@ button {
 
 
 #message-form {
-    position:absolute;
-    right:0;
-    bottom:0;
+    margin-top:5px;
     text-align: center;
     width: 100%;
 }

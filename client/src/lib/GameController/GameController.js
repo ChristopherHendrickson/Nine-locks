@@ -17,12 +17,12 @@ class GameController {
         'q':12,
         'k':13,
     }
-    constructor( { init_deck, players, setPlayers, setDeck, setPiles  }) {
+    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn  }) {
         
         this.setPlayers = setPlayers
         this.setDeck = setDeck
         this.setPiles = setPiles
-
+        this.setIsTurn = setIsTurn
         
         this.deck = new Deck(init_deck)
 
@@ -35,14 +35,12 @@ class GameController {
 
         for (let p of players) {
             const newPlayer = new Player(p)
-            const newHandShown = new Hand(true)
-            const newHandHidden = new Hand(false)
+            
             for (let i = 0; i < 3; i++) {
-                this.pickup(newHandShown) //add cards to players hands
-                this.pickup(newHandHidden)
+                this.pickup(newPlayer.handShown) //add cards to players hands
+                this.pickup(newPlayer.handHidden)
             }
-            newPlayer.handShown = newHandShown
-            newPlayer.handHidden = newHandHidden
+
             this.players.push(newPlayer) //player is now an object with two hand object, which contain 3 card objects each.
         }
     }
@@ -85,7 +83,8 @@ class GameController {
     }
 
     move(move) {
-        switch(move) {
+        console.log('got move', move.type)
+        switch(move.type) {
             case 'init':
                 this.setPlayers(this.playersToState())
                 this.setDeck(this.deckToState())
@@ -97,6 +96,7 @@ class GameController {
             default:
                 return
         }
+        // turn handler
     }
 
 }
@@ -172,6 +172,8 @@ class Player {
         this.id = player.id
         this.username = player.username
         this.connected = player.connected
+        this.handShown = new Hand(true)
+        this.handHidden = new Hand(false)
     }
 
 }
