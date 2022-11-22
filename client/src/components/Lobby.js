@@ -19,11 +19,11 @@ const Lobby = ({user, users, socket, currentRoom}) =>{
 
         
         const deck = [
-            '2c','2d','2h','2s','3c','3d','3h','3s','4c','4d','4h','4s',
-            '5c','5d','6h','5s','6c','6d','6h','6s','7c','7d','7h','7s',
-            '8c','8d','8h','8s','9c','9d','9h','9s','10c','10d','10h','10s',
-            'jc','jd','jh','js','qc','qd','qh','qs','kc','kd','kh','ks','ac',
-            'ad','ah','as',
+            'c2','d2','h2','s2','c3','d3','h3','s3','c4','d4','h4','s4',
+            'c5','d5','h5','s5','c6','d6','h6','s6','c7','d7','h7','s7',
+            'c8','d8','h8','s8','c9','d9','h9','s9','c10','d10','h10','s10',
+            'cj','dj','hj','sj','cq','dq','hq','sq','ck','dk','hk','sk','ca',
+            'da','ha','sa',
         ]
 
 
@@ -50,8 +50,9 @@ const Lobby = ({user, users, socket, currentRoom}) =>{
     }
 
     return (
-        <>
-        <p>connected users</p>
+        
+        <div className="main-content">
+            <p>connected users</p>
             <ul>
             {users.map((u)=>{
                 return (
@@ -64,7 +65,7 @@ const Lobby = ({user, users, socket, currentRoom}) =>{
             <button onClick={startGame}>Start Game</button>
             }
             <LeaveButton socket={socket} user={user}></LeaveButton>
-        </>
+        </div>
     )
 }
 export default Lobby

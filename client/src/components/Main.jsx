@@ -17,6 +17,24 @@ const Main = ({user, setUser, msg, sendMessage, socket}) =>{
 
 
 
+    socket.on('user_left', (user_left) => {
+        if (user_left.id == user.id) {
+            setUsers([])
+            setCurrentRoom(null)
+            navigate('/')
+        } else {
+            const new_users = [...users]
+            console.log(new_users,'unchanged')
+            const n = new_users.filter((u)=>{
+
+                return u.id!=user_left.id
+            })
+            console.log(n)
+            setUsers([...n])
+        }      
+    })
+
+
     socket.on('user_joined', (data)=>{
         console.log('user joined')
         console.log(data, 'data')
@@ -28,49 +46,22 @@ const Main = ({user, setUser, msg, sendMessage, socket}) =>{
         } else {
             setUsers([...users,data.user])
         }
-
     })
-
-    socket.on('user_left', (user_left) => {
-        console.log(user_left,'left')
-        if (user_left.id == user.id) {
-            setUsers([])
-            setCurrentRoom(null)
-            navigate('/')
-        } else {
-            const new_users = [...users]
-
-            const n = new_users.filter((u)=>{
-                return u.id!=user_left.id
-            })
-            setUsers([...n])
-        }
-    })
-
 
     socket.on('start_game', () => {
         setView('game')
     })
 
+
+
     return (
-        <>
-            {view == 'join' &&
-                <JoinGame user={user} setUser={setUser} socket={socket}></JoinGame>
-            }
-            {view == 'lobby' &&
-                <Lobby user={user} users={users} socket={socket} currentRoom={currentRoom}></Lobby> 
-            }
-            {view == 'game' &&
-                <Game socket={socket} user={user} ></Game>
-            }
-            {view != 'join' && (
-                    <>
-                        <Chat user={user} socket={socket} currentRoom={currentRoom}></Chat>
-                        
-                    </>
-                )
-            }
-        </>
+        <div className="main">
+            {view == 'join' && <JoinGame user={user} setUser={setUser} socket={socket}></JoinGame> }
+            {view == 'lobby' && <Lobby user={user} users={users} socket={socket} currentRoom={currentRoom}></Lobby> }
+            {view == 'game' && <Game socket={socket} user={user} ></Game> }
+            {view != 'join' && <Chat user={user} socket={socket} currentRoom={currentRoom}></Chat> }
+        </div>
+
     )
 }
 

@@ -44,6 +44,7 @@ const JoinGame = ({user, setUser, socket}) =>{
                 <br/>
                 <input type='submit' value='Join Game'></input>
             </form>
+            <div></div>
         </>
     )
 }
