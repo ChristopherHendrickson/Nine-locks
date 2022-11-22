@@ -62,7 +62,7 @@ class GameController {
     }
 
     playersToState () {
-        const new_players = this.players.map((p)=>{
+        const state_players = this.players.map((p)=>{
             return {
                 'id':p.id,
                 'username':p.username,
@@ -71,7 +71,7 @@ class GameController {
                 'handHidden':p.handHidden.cards.map((card) => {return {'id':card.id,'image':card.image}})
             }
         })
-        return new_players
+        return state_players
     }
 
     deckToState () {
@@ -79,7 +79,19 @@ class GameController {
     }
 
     pilesToState () {
-        return []
+        console.log(this.piles)
+        const state_piles = this.piles.map((pile)=>{
+            return {
+                'card':{
+                    'id':pile.card.id,
+                    'image':pile.card.image
+                },
+                'count':pile.count,
+                'playableIds': [...pile.playableIds],
+                'position':pile.position
+            }
+        })
+        return state_piles
     }
 
     move(move) {
@@ -132,7 +144,7 @@ class Pile {
         this.card = card
         this.position = 'facedown'
         this.count = 1
-        this.palyableIds = this.getPlayable(this.card) 
+        this.playableIds = this.getPlayable(this.card) 
         this.lockCount = 5
     }
 

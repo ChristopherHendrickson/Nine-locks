@@ -4,6 +4,7 @@ import all_cards_images from '../lib/cards/imageExport'
 import { useParams } from "react-router-dom"
 import GameController from "../lib/GameController/GameController" 
 import PlayerArea from "./PlayerArea"
+import PileArea from "./PileArea"
 
 import card_back from '../lib/cards/0.png'
 
@@ -54,12 +55,7 @@ const Game = ({ user, socket }) => {
     return (
         <>
             <div className="game-grid">
-                <div className="piles-area">
-
-                </div>
-                <div className="deck-area">
-
-                </div>
+                <PileArea piles={piles} selectedCard={selectedCard}></PileArea>
                 {players.map((player,i)=>{
                     if (players.length==2 && i == 1) {
                         i++

@@ -69,6 +69,8 @@ body {
     max-height:100%;
 }
 
+/* PLAYER AREAS */
+
 .player-area-0 {
     grid-column: 2/3;
     grid-row: 3/4;
@@ -171,6 +173,32 @@ body {
 
 .player-info-3 .player-name {
     transform: rotate(90deg);
+}
+
+/* PILE GRID */
+
+.board-center {
+    grid-column: 2/3;
+    grid-row: 2/3;
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
+    
+}
+
+.pile-area {
+    min-width: 210px;
+    min-height: 300px;
+    height: 80%;
+    width: 80%;
+    grid-column: 2/3;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+    margin: auto ;
+}
+
+.deck-area {
+    grid-column: 3/4;
 }
 
 
