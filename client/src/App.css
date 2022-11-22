@@ -44,14 +44,25 @@ body {
     /* background-color: red; */
     border-radius: 7px;
     cursor: pointer;
+    display: flex;
+
 }
 
-.card-img {
+.card-img  {
     margin:0;
-    max-height: 10.5vh;
+    max-height: 11vh;
     padding:0;
     vertical-align: bottom;
     border-radius: 5px;
+
+}
+
+.lock {
+    position:absolute;
+    align-self: center;
+    justify-self: center;
+    max-height: 11vh;
+    max-width: 
 
 }
 
@@ -181,28 +192,35 @@ body {
     grid-column: 2/3;
     grid-row: 2/3;
     display: grid;
-    grid-template-columns: 80px 1fr 80px;
+    grid-template-columns: 150px 1fr 150px;
     
 }
 
 .pile-area {
-    min-width: 210px;
-    min-height: 300px;
-    height: 80%;
-    width: 80%;
+    /* width: ; */
+    /* height: 300px; */
     grid-column: 2/3;
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(3,1fr);
-    margin: auto ;
+    margin: auto;
+    grid-gap: 2px;
+}
+
+
+
+.pile {
+    margin: auto;
 }
 
 .deck-area {
     grid-column: 3/4;
+    margin: auto;
 }
 
+.deck {
 
-
+}
 /* CHAT */
 
 

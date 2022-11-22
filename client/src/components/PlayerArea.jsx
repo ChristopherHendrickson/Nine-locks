@@ -1,4 +1,4 @@
-import card_back from './../lib/cards/0.png'
+import cardBack from './../lib/cards/0.png'
 
 const PlayerArea = ({ player, gridNumber, isUser, isTurn, handleSelect, selectedCard }) =>{
 
@@ -29,7 +29,7 @@ const PlayerArea = ({ player, gridNumber, isUser, isTurn, handleSelect, selected
                     return (
                         <div className="hand-wrap" key={card.id} >
                             <button onClick={()=>{handleClick(card.id)}} className={`card-btn ${selected}`} disabled={!isTurn || !isUser}>
-                                <img className={`card-img ${selected}`} src={isUser ? card.image : card_back}></img>
+                                <img className={`card-img ${selected}`} src={isUser ? card.image : cardBack}></img>
                             </button>
                         </div>
                     )

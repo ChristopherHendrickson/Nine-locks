@@ -1,21 +1,8 @@
 import all_cards_images from "../cards/imageExport"
 
 class GameController {
-    // does this need to take all state as an input???
     static faceToValMap = {
-        'a':1,
-        '2':2,
-        '3':3,
-        '4':4,
-        '5':5,
-        '6':6,
-        '7':7,
-        '8':8,
-        '9':9,
-        '10':10,
-        'j':11,
-        'q':12,
-        'k':13,
+        'a':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'j':11,'q':12,'k':13,
     }
     constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn  }) {
         
@@ -30,9 +17,10 @@ class GameController {
         for (let i=0;i<9;i++) {
             this.piles.push(new Pile(this.deck.draw()))
         }
-
+        this.piles[4].position = 'unlocked'
+        
+        
         this.players = []
-
         for (let p of players) {
             const newPlayer = new Player(p)
             
@@ -40,8 +28,7 @@ class GameController {
                 this.pickup(newPlayer.handShown) //add cards to players hands
                 this.pickup(newPlayer.handHidden)
             }
-
-            this.players.push(newPlayer) //player is now an object with two hand object, which contain 3 card objects each.
+            this.players.push(newPlayer)
         }
     }
 

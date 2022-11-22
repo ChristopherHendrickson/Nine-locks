@@ -55,7 +55,7 @@ const Game = ({ user, socket }) => {
     return (
         <>
             <div className="game-grid">
-                <PileArea piles={piles} selectedCard={selectedCard}></PileArea>
+                <PileArea piles={piles} selectedCard={selectedCard} deckCount={deck}></PileArea>
                 {players.map((player,i)=>{
                     if (players.length==2 && i == 1) {
                         i++
