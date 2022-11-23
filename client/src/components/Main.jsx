@@ -58,7 +58,7 @@ const Main = ({user, setUser, msg, sendMessage, socket}) =>{
         <div className="main">
             {view == 'join' && <JoinGame user={user} setUser={setUser} socket={socket}></JoinGame> }
             {view == 'lobby' && <Lobby user={user} users={users} socket={socket} currentRoom={currentRoom}></Lobby> }
-            {view == 'game' && <Game socket={socket} user={user} ></Game> }
+            {view == 'game' && <Game socket={socket} user={user} currentRoom={currentRoom}></Game> }
             {view != 'join' && <Chat user={user} socket={socket} currentRoom={currentRoom}></Chat> }
         </div>
 

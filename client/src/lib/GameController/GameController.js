@@ -4,13 +4,13 @@ class GameController {
     static faceToValMap = {
         'a':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'j':11,'q':12,'k':13,
     }
-    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn  }) {
+    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn, user  }) {
         
         this.setPlayers = setPlayers
         this.setDeck = setDeck
         this.setPiles = setPiles
         this.setIsTurn = setIsTurn
-        
+        this.user = user
         this.deck = new Deck(init_deck)
 
         this.piles = []
@@ -38,7 +38,11 @@ class GameController {
         const dcdPlayer = this.players.filter((p)=>{
             return p.id == player.id
         })
-        dcdPlayer[0].connected = false
+        if (dcdPlayer) {
+            dcdPlayer[0].connected = false
+        } else {
+            console.log('-------ERROR: recieved player disconnect but player was not found in current game-------')
+        }
         this.setPlayers(this.playersToState())
 
         
@@ -49,7 +53,7 @@ class GameController {
     }
 
     playersToState () {
-        const state_players = this.players.map((p)=>{
+        const statePlayers = this.players.map((p)=>{
             return {
                 'id':p.id,
                 'username':p.username,
@@ -58,16 +62,16 @@ class GameController {
                 'handHidden':p.handHidden.cards.map((card) => {return {'id':card.id,'image':card.image}})
             }
         })
-        return state_players
+        this.setPlayers(statePlayers)
     }
 
     deckToState () {
-        return this.deck.count
+        this.setDeck(this.deck.count)
     }
 
     pilesToState () {
         console.log(this.piles)
-        const state_piles = this.piles.map((pile)=>{
+        const statePiles = this.piles.map((pile)=>{
             return {
                 'card':{
                     'id':pile.card.id,
@@ -78,24 +82,53 @@ class GameController {
                 'position':pile.position
             }
         })
-        return state_piles
+        this.setPiles(statePiles)
     }
 
     move(move) {
+
+        const updateTurn = () => {
+            if (move.endTurn) {
+                if (move.player.id==this.user.id) {
+                    this.setIsTurn(false)
+                } else {
+                    const currentPlayerIndex = this.players.findIndex((player)=>{
+                        return player.id==move.player.id
+                    })
+                    const nextPlayerIndex = (currentPlayerIndex+1) % this.players.length
+                    console.log('it is turn of',this.players[nextPlayerIndex])
+                    console.log('i am',this.user)
+                    console.log('therefore it is my turn',this.players[nextPlayerIndex].id==this.user.id)
+                    this.setIsTurn(this.players[nextPlayerIndex].id==this.user.id)
+                }
+            } else {
+                this.setIsTurn(move.player.id==this.user.id)
+            }
+        }
+
         console.log('got move', move.type)
         switch(move.type) {
             case 'init':
-                this.setPlayers(this.playersToState())
-                this.setDeck(this.deckToState())
-                this.setPiles(this.pilesToState())
+                this.playersToState()
+                this.deckToState()
+                this.pilesToState()
                 break
-            case 'something else':
-                //code
+            case 'pickup':
+                const player = this.players.find((player)=>{
+                    return player.id === move.player.id
+                })
+                const hand = player.handHidden.cards.length > player.handShown.cards.length ? player.handShown : player.handHidden
+                this.pickup(hand)
+                this.playersToState()
+                this.deckToState()
+                updateTurn()
                 break
             default:
                 return
         }
         // turn handler
+
+
     }
 
 }
