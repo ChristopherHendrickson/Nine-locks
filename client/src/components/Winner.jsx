@@ -9,11 +9,11 @@ const Winner = ({ winner, user, socket }) => {
         setSize(Math.abs(size-1))
     }
 
-    const winnersString = winner[0].username
-    
+    let winnersString = winner[0]
+    console.log(winner)
     if (winner.length > 1) {
         for (let i=1;i<winner.length;i++){
-            winnersString+=` and ${winner[i].username}`
+            winnersString+=` and ${winner[i]}`
         }
     }
 
@@ -31,7 +31,6 @@ const Winner = ({ winner, user, socket }) => {
                 </div>
                 <div className="lifter">                
                 <span>
-                    <button className="btn-space">Play Again</button>
                     <LeaveButton user={user} socket={socket}></LeaveButton>
                 </span>
                 </div>

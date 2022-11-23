@@ -4,7 +4,7 @@ class GameController {
     static faceToValMap = {
         'a':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'j':11,'q':12,'k':13
     }
-    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn, user, setPilesOnly, setUsingKey, setWinner }) {
+    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn, user, setPilesOnly, setUsingKey, setWinner, setNoMoves }) {
         
         this.setPlayers = setPlayers
         this.setDeck = setDeck
@@ -15,6 +15,7 @@ class GameController {
         this.setPilesOnly = setPilesOnly
         this.setUsingKey = setUsingKey
         this.setWinner = setWinner
+        this.setNoMoves = setNoMoves
 
         this.piles = []
         for (let i=0;i<9;i++) {
@@ -39,7 +40,7 @@ class GameController {
 
         //updating game controller players
         const dcdPlayer = this.players.filter((p)=>{
-            return p.id == player.id
+            return p.id === player.id
         })
         if (dcdPlayer) {
             dcdPlayer[0].connected = false
@@ -91,28 +92,57 @@ class GameController {
 
         const updateTurn = (_move) => {
             if (_move.endTurn) {
-                if (move.player.id==this.user.id) {
-                    this.setIsTurn(false)
-                } else {
                     const currentPlayerIndex = this.players.findIndex((player)=>{
-                        return player.id==_move.player.id
+                        return player.id===_move.player.id
                     })
                     let nextPlayerIndex = (currentPlayerIndex+1) % this.players.length
+                    let loopCount = 0
                     while (!this.players[nextPlayerIndex].connected || !this.players[nextPlayerIndex].active) {
                         nextPlayerIndex = (nextPlayerIndex+1) % this.players.length
+                        loopCount++
+                        if (loopCount>this.players.length) {
+                            break
+                        }
+                    }
+
+                    if (this.deck.count===0) {
+                        const player = this.players[nextPlayerIndex]
+                        if (!hasMoves(player)) {
+                            this.setNoMoves(player.id===this.user.id)
+                            return
+                        }
+
                     }
                     
-                    
-                    this.setIsTurn(this.players[nextPlayerIndex].id==this.user.id)
-                }
+                    this.setIsTurn(this.players[nextPlayerIndex].id===this.user.id)
             } else {
-                this.setIsTurn(_move.player.id==this.user.id) //retain turn for current player
+                this.setIsTurn(_move.player.id===this.user.id) //retain turn for current player
             }
-            // this.setIsTurn(true)
         }
+
+        const hasMoves = (player) => {
+            for (let card of player.handShown.cards) {
+                for (let pile of this.piles) {
+                    if (pile.position==='unlocked' && pile.playableIds.includes(card.id)) {
+                        return true
+                    }
+                }
+            }
+            for (let card of player.handHidden.cards) {
+                for (let pile of this.piles) {
+                    if (pile.position==='unlocked' && pile.playableIds.includes(card.id)) {
+                        return true
+                    }
+                }
+            }
+            return false
+        } 
+
         const player = this.players.find((player)=>{
             return player.id === move.player?.id
         })
+
+
         switch(move.type) {
             
             case 'init':
@@ -129,49 +159,58 @@ class GameController {
 
                 // if all piles are unlocked then there is no move after pickup
                 const unlockedPiles = this.piles.filter((pile)=>{
-                    console.log(pile.status)
-                    return pile.position == 'unlocked'
+                    return pile.position === 'unlocked'
                 })
-                console.log(unlockedPiles,' unlocked ')
-                if (unlockedPiles.length==9) {
+
+                if (unlockedPiles.length===9) {
                     move.endTurn=true
-                } else {
+                } else {    
                     this.setPilesOnly(true)
                 }
+                
                 updateTurn(move)
-
                 break
+
             case 'changePile':
                 const pile = this.piles[move.pileIndex]
-                if (pile.position=='facedown') {
+                if (pile.position==='facedown') {
                     pile.position='unlocked'
-                    if (pile.card.value==9) {
+                    if (pile.card.value===9) {
                         move.endTurn=false
                         this.setUsingKey(true)
+                        this.setPilesOnly(true)
                     } else {
                         this.setUsingKey(false)
+                        this.setPilesOnly(false)
+
                     }
-                } else if (pile.position=='locked') {
+                } else if (pile.position==='locked') {
                     pile.position='unlocked'
                 } else {
                     pile.position='locked'
                 }
-                console.log('cahnge pile route, setting pilesOnly')
-                this.setPilesOnly(pile.card.value==9)
+
+                
+                if (this.deck.count===0) {
+                    this.piles.forEach((pile)=>{
+                        pile.position = pile.position === 'facedown' ? 'unlocked' : pile.position
+                    })
+                }
                 updateTurn(move)
                 this.pilesToState()
                 break
+
             case 'playCard':
                 const _pile = this.piles[move.pileIndex]
                 const cardId = move.cardId
                 const cardInShown = player.handShown.cards.find((card)=>{
-                    return card.id == cardId
+                    return card.id === cardId
                 })
                 const cardInHidden = player.handHidden.cards.find((card)=>{
-                    return card.id == cardId
+                    return card.id === cardId
                 })
                 const card = cardInHidden || cardInShown
-                
+                console.log(card)
                 _pile.recieveCard(card)
                 player.handShown.cards = player.handShown.cards.filter((card)=>{
                     return card.id!=cardId
@@ -180,7 +219,7 @@ class GameController {
                     return card.id!=cardId
                 })
 
-                if (card.value==9) {
+                if (card.value===9) {
  
                     move.endTurn=false
                     this.setUsingKey(true)
@@ -190,36 +229,42 @@ class GameController {
                 this.pilesToState()
                 this.playersToState()
 
-                if (player.handShown.cards.length == 0) {
-                    this.setWinner([player])
+                if (player.handShown.cards.length === 0) {
+                    this.setWinner([player.username])
                     this.setIsTurn(false)
                 } else {
                     updateTurn(move)
                 }
                 break
+
             case 'noMove': 
-                player.active='false'
+                player.active=false
                 player.finalScore = {
                     'handShownCount':player.handShown.cards.length,
                     'handHiddenCount':player.handHidden.cards.length
                 }
                 //check players
                 const totalFinished = this.players.filter((p)=>{
-                    return p.active
+                    return !p.active || !p.connected
                 }).length
 
                 if (totalFinished === this.players.length) {
                     
-                    const score1 = this.players.reduce((min,p)=>{
+                    const connectedPlayers = this.players.filter((p)=>{
+                        return p.connected
+                    })
+
+                    const score1 = connectedPlayers.reduce((min,p)=>{
                         return Math.min(min,p.finalScore.handShownCount)
                     },Infinity)
 
-                    const potentialWinners = this.players.filter((p)=>{
-                        return this.players.finalScore.handShownCount === score1
+                    const potentialWinners = connectedPlayers.filter((p)=>{
+                        return p.finalScore.handShownCount === score1
                     })
 
                     if (potentialWinners.length===1) {
-                        this.setWinner(potentialWinners)
+                        console.log('winner',potentialWinners)
+                        this.setWinner([potentialWinners[0].username])
                     } else {
                         
                         const score2 = potentialWinners.reduce((min,p)=>{
@@ -227,21 +272,24 @@ class GameController {
                         },Infinity)
                         
                         const potentialWinners2 = potentialWinners.filter((p)=>{
-                            return this.players.finalScore.handHiddenCount === score2
+                            return p.finalScore.handHiddenCount === score2
                         })
+                        console.log('winner',potentialWinners2)
 
-                        this.setWinner(potentialWinners2)
+                        this.setWinner(potentialWinners2.map((w)=>w.username))
                         
                     }
                     
+                } else {
+                    console.log('updating turn from no move')
+                    updateTurn(move)
                 }
-
-                updateTurn(move)
                 break
+
             default:
                 return
         }
-        // turn handler
+
 
 
     }
@@ -256,7 +304,7 @@ class Card {
         this.suit = id[0] // suit
         this.face = id.slice(1) // number or royal
         this.image = all_cards_images[id] // image ref
-        this.colour = this.suit == 'h' || this.suit == 'd' ? 'red' : 'black'
+        this.colour = this.suit === 'h' || this.suit === 'd' ? 'red' : 'black'
 
     }
 }
@@ -281,16 +329,16 @@ class Pile {
         this.position = 'facedown'
         this.count = 1
         this.playableIds = this.getPlayable(this.card) 
-        this.lockCount = 5
+        this.lockCount = 4
     }
 
     getPlayable (card) {
         const playableList = [] 
 
-        const [ sameSuits, diffSuits ] = card.colour == 'red' ? [['h','d'],['s','c']] : [['s','c'],['h','d']]
+        const [ sameSuits, diffSuits ] = card.colour === 'red' ? [['h','d'],['s','c']] : [['s','c'],['h','d']]
         const val = card.value
-        const valAddOne = val + 1 == 14 ? 1 : val + 1
-        const valLessOne = val - 1 == 0 ? 13 : val - 1 
+        const valAddOne = val + 1 === 14 ? 1 : val + 1
+        const valLessOne = val - 1 === 0 ? 13 : val - 1 
         const addOneId = Object.keys(GameController.faceToValMap).find(key => GameController.faceToValMap[key] === valAddOne);
         const lessOneId = Object.keys(GameController.faceToValMap).find(key => GameController.faceToValMap[key] === valLessOne);
         const valId = Object.keys(GameController.faceToValMap).find(key => GameController.faceToValMap[key] === val);
@@ -312,7 +360,7 @@ class Pile {
         this.card = card
         this.count +=1
         this.playableIds = this.getPlayable(this.card)
-        if (this.count == this.lockCount) {
+        if (this.count === this.lockCount) {
             this.position = 'locked'
         } 
     }
@@ -326,8 +374,8 @@ class Player {
         this.handShown = new Hand(true)
         this.handHidden = new Hand(false)
         this.finalScore = {
-            'shownHandCount':null,
-            'hiddenHandCount':null
+            'handShownCount':null,
+            'handHiddenCount':null
         }
         this.active = true
     }

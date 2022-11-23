@@ -1,6 +1,6 @@
 import cardBack from './../lib/cards/0.png'
 
-const PlayerArea = ({ player, gridNumber, isUsersHand, isTurn, handleSelect, selectedCard, pilesOnly }) =>{
+const PlayerArea = ({ player, gridNumber, isUsersHand, handleSelect, selectedCard, pilesOnly }) =>{
 
 
     const handleClick = (cardId) => {

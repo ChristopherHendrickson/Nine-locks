@@ -52,10 +52,6 @@ const noMove = { //sent when the player has no allowed moves and the deck is emp
     'type': 'noMove',
     'room_id':'room_id',
     'player': 'player object',
-    'finalScores':{
-        'shownHandCount':1, // int, length of remaining cards in shown hand,
-        'hiddenHandCount':1 // int, length of remaining cards in shown hand,
-    },
     'endTurn':true
 }
 // when the gamecontroller recieves noMove the player object prop of 'active' is set to false

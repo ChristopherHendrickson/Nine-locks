@@ -52,9 +52,6 @@ function App() {
       if (data.status == 404 || data.status == 403) {
 
         setErrorMessage(data.message)
-        setTimeout(()=>{
-          setErrorMessage('')
-        },4000)
         navigate('/')
       }
     })

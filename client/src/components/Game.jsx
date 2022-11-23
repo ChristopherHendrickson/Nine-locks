@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react"
 import LeaveButton from "./LeaveButton"
-import all_cards_images from '../lib/cards/imageExport'
-import { useParams } from "react-router-dom"
 import GameController from "../lib/GameController/GameController" 
 import PlayerArea from "./PlayerArea"
 import PileArea from "./PileArea"
 import Winner from "./Winner"
 
-import card_back from '../lib/cards/0.png'
+
 
 const Game = ({ user, socket, currentRoom }) => {
 
 
     const [gameController,setGameController] = useState(null)
-    const [initDeck,setInitDeck] = useState([])
-    const [moves,setMoves] = useState([])
     const [isTurn,setIsTurn] = useState(user.id == currentRoom)
 
     const [players,setPlayers] = useState([])
@@ -24,7 +20,18 @@ const Game = ({ user, socket, currentRoom }) => {
     const [selectedCard,setSelectedCard] = useState(null)
     const [pilesOnly,setPilesOnly] = useState(false)
     const [winner,setWinner] = useState(null)
+    const [noMoves,setNoMoves] = useState(false)
+
     socket.on('init_game', (data) => {
+        setIsTurn(user.id == currentRoom)
+        setPlayers([])
+        setPiles([])
+        setDeck([])
+        setUsingKey(false)
+        setSelectedCard(null)
+        setPilesOnly(false)
+        setWinner(null)
+        setNoMoves(false)
         console.log('RECIEVED GAME INIT')
         const init_deck = data.init_deck
         const _players = data.players
@@ -39,21 +46,31 @@ const Game = ({ user, socket, currentRoom }) => {
             "user":user,
             "setPilesOnly":setPilesOnly,
             "setUsingKey":setUsingKey,
-            "setWinner":setWinner
+            "setWinner":setWinner,
+            "setNoMoves":setNoMoves
         }))
     })
 
     useEffect(()=>{
+        if (noMoves) {
+            socket.emit('move',{
+                'type':'noMove',
+                'room_id':currentRoom, 
+                'player':user,
+                'endTurn':true
+            })
+        }
+    },[noMoves])
+
+    useEffect(()=>{
         if (gameController) { //once we get the gameController set up, tell it to init the game
-            console.log('init game')
+
             gameController.move({type:'init'})
-            console.log('init move')
 
             socket.on('user_left', (user_left) => {
                 gameController.playerLeft(user_left)                
             })
             socket.on('move', (data)=>{
-                console.log('recieved move from socket')
                 gameController.move(data)
             })
         }
@@ -93,7 +110,6 @@ const Game = ({ user, socket, currentRoom }) => {
     const handlePlayCard = (i) => {
         setIsTurn(false)
         setSelectedCard(null)
-        console.log('emitting playcard case')
         socket.emit('move',{
             'type':'playCard',
             'room_id':currentRoom,
@@ -104,9 +120,7 @@ const Game = ({ user, socket, currentRoom }) => {
         })
     }
 
-    useEffect(()=>{
-        console.log('i am state', piles)
-    },[selectedCard])
+
 
     return (
         <>
@@ -117,13 +131,17 @@ const Game = ({ user, socket, currentRoom }) => {
                     if (players.length==2 && i == 1) {
                         i++
                     }
-                    return <PlayerArea key={player.id} pilesOnly={pilesOnly} player={player} gridNumber={i} isUsersHand={user.id==player.id} isTurn={isTurn} handleSelect={handleSelect} selectedCard={selectedCard}></PlayerArea>
+                    return <PlayerArea key={player.id} pilesOnly={pilesOnly} player={player} gridNumber={i} isUsersHand={user.id==player.id} handleSelect={handleSelect} selectedCard={selectedCard}></PlayerArea>
                 })}
 
                 {winner &&
-                    <Winner player={{ winner }} user={user} socket={socket}></Winner>
+                    <Winner winner={ winner } user={user} socket={socket}></Winner>
                 }
-
+                <span>
+                <p>no moves {noMoves.toString()}</p>
+                <p>is turn {isTurn.toString()}</p>
+                <p>{winner}</p>
+                </span>
             </div>
             
 

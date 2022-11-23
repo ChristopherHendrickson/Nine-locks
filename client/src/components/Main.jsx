@@ -14,9 +14,6 @@ const Main = ({user, setUser, msg, sendMessage, socket}) =>{
     const [view,setView] = useState('join')
     const [users,setUsers] = useState([])
 
-
-
-
     socket.on('user_left', (user_left) => {
         if (user_left.id == user.id) {
             setUsers([])
@@ -24,23 +21,20 @@ const Main = ({user, setUser, msg, sendMessage, socket}) =>{
             navigate('/')
         } else {
             const new_users = [...users]
-            console.log(new_users,'unchanged')
+
             const n = new_users.filter((u)=>{
 
                 return u.id!=user_left.id
             })
-            console.log(n)
             setUsers([...n])
         }      
     })
 
 
     socket.on('user_joined', (data)=>{
-        console.log('user joined')
-        console.log(data, 'data')
+
         if (data.user.id == user.id) {
             setUsers([...data.existing_users,data.user])
-            console.log([data.existing_users,data.user],'set to this')
             setCurrentRoom(data.room_id)
             setView('lobby')
         } else {
@@ -57,7 +51,7 @@ const Main = ({user, setUser, msg, sendMessage, socket}) =>{
     return (
         <div className="main">
             {view == 'join' && <JoinGame user={user} setUser={setUser} socket={socket}></JoinGame> }
-            {view == 'lobby' && <Lobby user={user} users={users} socket={socket} currentRoom={currentRoom}></Lobby> }
+            {view == 'lobby' && <Lobby user={user} users={users} socket={socket} currentRoom={currentRoom} view={view}></Lobby> }
             {view == 'game' && <Game socket={socket} user={user} currentRoom={currentRoom}></Game> }
             {view != 'join' && <Chat user={user} socket={socket} currentRoom={currentRoom}></Chat> }
         </div>
