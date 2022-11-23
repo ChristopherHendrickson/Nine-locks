@@ -8,9 +8,9 @@ const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePi
         handlePickup()
     }
 
-    const handlePileClick = () => {
+    const handlePileClick = (i) => {
         if (pilesOnly) {
-            handleChangePile()
+            handleChangePile(i)
         } else {
             // playcard
             return
@@ -22,16 +22,25 @@ const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePi
         <div className="board-center">
             <div className="pile-area">
                 {piles.map((pile,i)=>{
-                    let disabled = pile.position!='unlocked' || !pile.playableIds.includes(selectedCard)
+                    let disabled = !isTurn || pile.position!='unlocked' || !pile.playableIds.includes(selectedCard)
+                    
+                    const onlyFlipping = piles.filter((pile)=>{
+                        return pile.position=='facedown'
+                    }).length > 0
+
                     if (pilesOnly && isTurn) {
-                        disabled = false
+                        if (onlyFlipping) {
+                            disabled = pile.position!=='facedown'
+                        } else {
+                            disabled = false
+                        }
                     }
 
                     return (    
                         
 
                         <div className={`pile`} key={pile.card.id}>
-                            <button onClick={handlePileClick} className='card-btn' disabled={disabled}>
+                            <button onClick={()=>handlePileClick(i)} className='card-btn' disabled={disabled}>
                                 <img className="card-img" src={pile.position!='facedown' ? pile.card.image : cardBack}></img>
                                 {pile.position=='locked' ? <img className='lock' src={lock}></img> : <></>}
                             </button>

@@ -70,7 +70,6 @@ class GameController {
     }
 
     pilesToState () {
-        console.log(this.piles)
         const statePiles = this.piles.map((pile)=>{
             return {
                 'card':{
@@ -96,14 +95,12 @@ class GameController {
                         return player.id==move.player.id
                     })
                     const nextPlayerIndex = (currentPlayerIndex+1) % this.players.length
-                    console.log('it is turn of',this.players[nextPlayerIndex])
-                    console.log('i am',this.user)
-                    console.log('therefore it is my turn',this.players[nextPlayerIndex].id==this.user.id)
                     this.setIsTurn(this.players[nextPlayerIndex].id==this.user.id)
                 }
             } else {
                 this.setIsTurn(move.player.id==this.user.id)
             }
+            this.setIsTurn(true)
         }
 
         console.log('got move', move.type)
@@ -123,6 +120,15 @@ class GameController {
                 this.deckToState()
                 updateTurn()
                 break
+            case 'changePile':
+                const pile = this.piles[move.pileIndex]
+                if (pile.position=='facedown' || pile.position=='locked') {
+                    pile.position='unlocked'
+                } else {
+                    pile.position='locked'
+                }
+                this.pilesToState()
+            
             default:
                 return
         }

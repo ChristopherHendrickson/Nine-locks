@@ -60,18 +60,19 @@ const Game = ({ user, socket, currentRoom }) => {
         console.log('sending pickup move')
         socket.emit('move',{
             'type':'pickup',
-            'room_id':currentRoom,
+            'room_id':currentRoom, //different casing because python backend expects room_id
             'player':user,
             'endTurn':false
         })
     }
 
-    const handleChangePile = () => {
-        setIsTurn(false)
+    const handleChangePile = (i) => {
+        // setIsTurn(false)
         setPilesOnly(false)
         socket.emit('move',{
             'type':'changePile',
             'room_id':currentRoom,
+            'pileIndex':i, 
             'player':user,
             'endTurn':true
         })
