@@ -19,7 +19,7 @@ const Game = ({ user, socket, currentRoom }) => {
     const [players,setPlayers] = useState([])
     const [piles,setPiles] = useState([])
     const [deck,setDeck] = useState(0)
-
+    const [usingKey, setUsingKey] = useState(false)
     const [selectedCard,setSelectedCard] = useState(null)
     const [pilesOnly,setPilesOnly] = useState(false)
     socket.on('init_game', (data) => {
@@ -27,7 +27,7 @@ const Game = ({ user, socket, currentRoom }) => {
         const init_deck = data.init_deck
         const _players = data.players
         _players.forEach((p)=>p.connected=true)
-        setGameController(new GameController({ "init_deck":init_deck,"players":_players,"setPlayers":setPlayers,"setPiles":setPiles,"setDeck":setDeck,"setIsTurn":setIsTurn,"user":user }))
+        setGameController(new GameController({ "init_deck":init_deck,"players":_players,"setPlayers":setPlayers,"setPiles":setPiles,"setDeck":setDeck,"setIsTurn":setIsTurn,"user":user,"setPilesOnly":setPilesOnly,"setUsingKey":setUsingKey }))
     })
 
     useEffect(()=>{
@@ -56,8 +56,6 @@ const Game = ({ user, socket, currentRoom }) => {
 
     const handlePickup = () => {
         setIsTurn(false) //this gets unset in gameController depending if it is their turn
-        setPilesOnly(true)
-        console.log('sending pickup move')
         socket.emit('move',{
             'type':'pickup',
             'room_id':currentRoom, //different casing because python backend expects room_id
@@ -67,8 +65,7 @@ const Game = ({ user, socket, currentRoom }) => {
     }
 
     const handleChangePile = (i) => {
-        // setIsTurn(false)
-        setPilesOnly(false)
+        setIsTurn(false)
         socket.emit('move',{
             'type':'changePile',
             'room_id':currentRoom,
@@ -81,12 +78,12 @@ const Game = ({ user, socket, currentRoom }) => {
     return (
         <>
             <div className="game-grid">
-                <PileArea piles={piles} selectedCard={selectedCard} pilesOnly={pilesOnly} deckCount={deck} handlePickup={handlePickup} handleChangePile={handleChangePile} isTurn={isTurn}></PileArea>
+                <PileArea piles={piles} selectedCard={selectedCard} pilesOnly={pilesOnly} deckCount={deck} handlePickup={handlePickup} handleChangePile={handleChangePile} isTurn={isTurn} usingKey={usingKey}></PileArea>
                 {players.map((player,i)=>{
                     if (players.length==2 && i == 1) {
                         i++
                     }
-                    return <PlayerArea key={player.id} pilesOnly={pilesOnly} player={player} gridNumber={i} isUser={user.id==player.id} isTurn={isTurn} handleSelect={handleSelect} selectedCard={selectedCard}></PlayerArea>
+                    return <PlayerArea key={player.id} pilesOnly={pilesOnly} player={player} gridNumber={i} isUsersHand={user.id==player.id} isTurn={isTurn} handleSelect={handleSelect} selectedCard={selectedCard}></PlayerArea>
                 })}
 
 

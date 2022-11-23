@@ -1,13 +1,13 @@
 import cardBack from './../lib/cards/0.png'
 
-const PlayerArea = ({ player, gridNumber, isUser, isTurn, handleSelect, selectedCard, pilesOnly }) =>{
+const PlayerArea = ({ player, gridNumber, isUsersHand, isTurn, handleSelect, selectedCard, pilesOnly }) =>{
 
 
     const handleClick = (card_id) => {
         console.log(card_id)
         handleSelect(card_id)
     }
-    let disabled = !isTurn || !isUser || pilesOnly
+    let disabled = !isTurn || !isUsersHand || pilesOnly
     return (
         <>
         <div className={`player-area-${gridNumber}`}>
@@ -29,7 +29,7 @@ const PlayerArea = ({ player, gridNumber, isUser, isTurn, handleSelect, selected
                     return (
                         <div className="hand-wrap" key={card.id} >
                             <button onClick={()=>{handleClick(card.id)}} className={`card-btn ${selected}`} disabled={disabled}>
-                                <img className={`card-img ${selected}`} src={isUser ? card.image : cardBack}></img>
+                                <img className={`card-img ${selected}`} src={isUsersHand ? card.image : cardBack}></img>
                             </button>
                         </div>
                     )

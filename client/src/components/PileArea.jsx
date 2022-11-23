@@ -1,7 +1,7 @@
 import cardBack from './../lib/cards/0.png'
 import lock from './../lib/misc/lock.png'
 
-const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePile, isTurn, pilesOnly }) =>{
+const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePile, isTurn, pilesOnly, usingKey }) =>{
 
 
     const Pickup = () => {
@@ -29,10 +29,17 @@ const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePi
                     }).length > 0
 
                     if (pilesOnly && isTurn) {
-                        if (onlyFlipping) {
+                        // if (onlyFlipping && !usingKey) {
+                        //     disabled = pile.position!=='facedown'
+                        // } else if  {
+                        //     disabled = false
+                        // } else
+                        if (usingKey) {
+                            disabled = false
+                        } else if (onlyFlipping) {
                             disabled = pile.position!=='facedown'
                         } else {
-                            disabled = false
+                            disabled = pile.position=='unlocked'
                         }
                     }
 

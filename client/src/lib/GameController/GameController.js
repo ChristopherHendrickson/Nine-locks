@@ -4,7 +4,7 @@ class GameController {
     static faceToValMap = {
         'a':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'j':11,'q':12,'k':13,
     }
-    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn, user  }) {
+    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn, user, setPilesOnly, setUsingKey  }) {
         
         this.setPlayers = setPlayers
         this.setDeck = setDeck
@@ -12,6 +12,8 @@ class GameController {
         this.setIsTurn = setIsTurn
         this.user = user
         this.deck = new Deck(init_deck)
+        this.setPilesOnly = setPilesOnly
+        this.setUsingKey = setUsingKey
 
         this.piles = []
         for (let i=0;i<9;i++) {
@@ -100,7 +102,7 @@ class GameController {
             } else {
                 this.setIsTurn(move.player.id==this.user.id)
             }
-            this.setIsTurn(true)
+            // this.setIsTurn(true)
         }
 
         console.log('got move', move.type)
@@ -118,15 +120,26 @@ class GameController {
                 this.pickup(hand)
                 this.playersToState()
                 this.deckToState()
+                this.setPilesOnly(true)
                 updateTurn()
                 break
             case 'changePile':
                 const pile = this.piles[move.pileIndex]
-                if (pile.position=='facedown' || pile.position=='locked') {
+                if (pile.position=='facedown') {
+                    pile.position='unlocked'
+                    if (pile.card.value==9) {
+                        move.endTurn=false
+                        this.setUsingKey(true)
+                    } else {
+                        this.setUsingKey(false)
+                    }
+                } else if (pile.position=='locked') {
                     pile.position='unlocked'
                 } else {
                     pile.position='locked'
                 }
+                this.setPilesOnly(pile.card.value==9)
+                updateTurn()
                 this.pilesToState()
             
             default:
