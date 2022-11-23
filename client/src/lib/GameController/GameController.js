@@ -2,9 +2,9 @@ import all_cards_images from "../cards/imageExport"
 
 class GameController {
     static faceToValMap = {
-        'a':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'j':11,'q':12,'k':13,
+        'a':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'j':11,'q':12,'k':13
     }
-    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn, user, setPilesOnly, setUsingKey  }) {
+    constructor( { init_deck, players, setPlayers, setDeck, setPiles, setIsTurn, user, setPilesOnly, setUsingKey, setWinner }) {
         
         this.setPlayers = setPlayers
         this.setDeck = setDeck
@@ -14,6 +14,7 @@ class GameController {
         this.deck = new Deck(init_deck)
         this.setPilesOnly = setPilesOnly
         this.setUsingKey = setUsingKey
+        this.setWinner = setWinner
 
         this.piles = []
         for (let i=0;i<9;i++) {
@@ -45,7 +46,7 @@ class GameController {
         } else {
             console.log('-------ERROR: recieved player disconnect but player was not found in current game-------')
         }
-        this.setPlayers(this.playersToState())
+        this.playersToState()
 
         
     }
@@ -79,7 +80,7 @@ class GameController {
                     'image':pile.card.image
                 },
                 'count':pile.count,
-                'playableIds': [...pile.playableIds],
+                'playableIds': [...pile.playableIds],   
                 'position':pile.position
             }
         })
@@ -88,40 +89,57 @@ class GameController {
 
     move(move) {
 
-        const updateTurn = () => {
-            if (move.endTurn) {
+        const updateTurn = (_move) => {
+            if (_move.endTurn) {
                 if (move.player.id==this.user.id) {
                     this.setIsTurn(false)
                 } else {
                     const currentPlayerIndex = this.players.findIndex((player)=>{
-                        return player.id==move.player.id
+                        return player.id==_move.player.id
                     })
-                    const nextPlayerIndex = (currentPlayerIndex+1) % this.players.length
+                    let nextPlayerIndex = (currentPlayerIndex+1) % this.players.length
+                    while (!this.players[nextPlayerIndex].connected || !this.players[nextPlayerIndex].active) {
+                        nextPlayerIndex = (nextPlayerIndex+1) % this.players.length
+                    }
+                    
+                    
                     this.setIsTurn(this.players[nextPlayerIndex].id==this.user.id)
                 }
             } else {
-                this.setIsTurn(move.player.id==this.user.id)
+                this.setIsTurn(_move.player.id==this.user.id) //retain turn for current player
             }
             // this.setIsTurn(true)
         }
-
-        console.log('got move', move.type)
+        const player = this.players.find((player)=>{
+            return player.id === move.player?.id
+        })
         switch(move.type) {
+            
             case 'init':
                 this.playersToState()
                 this.deckToState()
                 this.pilesToState()
                 break
             case 'pickup':
-                const player = this.players.find((player)=>{
-                    return player.id === move.player.id
-                })
                 const hand = player.handHidden.cards.length > player.handShown.cards.length ? player.handShown : player.handHidden
                 this.pickup(hand)
                 this.playersToState()
                 this.deckToState()
-                this.setPilesOnly(true)
-                updateTurn()
+
+
+                // if all piles are unlocked then there is no move after pickup
+                const unlockedPiles = this.piles.filter((pile)=>{
+                    console.log(pile.status)
+                    return pile.position == 'unlocked'
+                })
+                console.log(unlockedPiles,' unlocked ')
+                if (unlockedPiles.length==9) {
+                    move.endTurn=true
+                } else {
+                    this.setPilesOnly(true)
+                }
+                updateTurn(move)
+
                 break
             case 'changePile':
                 const pile = this.piles[move.pileIndex]
@@ -138,10 +156,88 @@ class GameController {
                 } else {
                     pile.position='locked'
                 }
+                console.log('cahnge pile route, setting pilesOnly')
                 this.setPilesOnly(pile.card.value==9)
-                updateTurn()
+                updateTurn(move)
                 this.pilesToState()
-            
+                break
+            case 'playCard':
+                const _pile = this.piles[move.pileIndex]
+                const cardId = move.cardId
+                const cardInShown = player.handShown.cards.find((card)=>{
+                    return card.id == cardId
+                })
+                const cardInHidden = player.handHidden.cards.find((card)=>{
+                    return card.id == cardId
+                })
+                const card = cardInHidden || cardInShown
+                
+                _pile.recieveCard(card)
+                player.handShown.cards = player.handShown.cards.filter((card)=>{
+                    return card.id!=cardId
+                })
+                player.handHidden.cards = player.handHidden.cards.filter((card)=>{
+                    return card.id!=cardId
+                })
+
+                if (card.value==9) {
+ 
+                    move.endTurn=false
+                    this.setUsingKey(true)
+                    this.setPilesOnly(true)
+                }
+
+                this.pilesToState()
+                this.playersToState()
+
+                if (player.handShown.cards.length == 0) {
+                    this.setWinner([player])
+                    this.setIsTurn(false)
+                } else {
+                    updateTurn(move)
+                }
+                break
+            case 'noMove': 
+                player.active='false'
+                player.finalScore = {
+                    'handShownCount':player.handShown.cards.length,
+                    'handHiddenCount':player.handHidden.cards.length
+                }
+                //check players
+                const totalFinished = this.players.filter((p)=>{
+                    return p.active
+                }).length
+
+                if (totalFinished === this.players.length) {
+                    
+                    const score1 = this.players.reduce((min,p)=>{
+                        return Math.min(min,p.finalScore.handShownCount)
+                    },Infinity)
+
+                    const potentialWinners = this.players.filter((p)=>{
+                        return this.players.finalScore.handShownCount === score1
+                    })
+
+                    if (potentialWinners.length===1) {
+                        this.setWinner(potentialWinners)
+                    } else {
+                        
+                        const score2 = potentialWinners.reduce((min,p)=>{
+                            return Math.min(min,p.finalScore.handHiddenCount)
+                        },Infinity)
+                        
+                        const potentialWinners2 = potentialWinners.filter((p)=>{
+                            return this.players.finalScore.handHiddenCount === score2
+                        })
+
+                        this.setWinner(potentialWinners2)
+                        
+                    }
+                    
+                }
+
+                updateTurn(move)
+                break
             default:
                 return
         }
@@ -161,6 +257,7 @@ class Card {
         this.face = id.slice(1) // number or royal
         this.image = all_cards_images[id] // image ref
         this.colour = this.suit == 'h' || this.suit == 'd' ? 'red' : 'black'
+
     }
 }
 
@@ -188,20 +285,23 @@ class Pile {
     }
 
     getPlayable (card) {
+        const playableList = [] 
 
-        const playableList = []
-
-        const [ sameSuits, diffSuits ]  = card.colour = 'red' ? [['h','d'],['s','c']] : [['s','c'],['h','d']]
+        const [ sameSuits, diffSuits ] = card.colour == 'red' ? [['h','d'],['s','c']] : [['s','c'],['h','d']]
         const val = card.value
-        const valAddOne = (val + 1) % 13 //aces can be played on kings
-        const valLessOne = val - 1 == 0 ? 13 : val - 1 //kings can be played on aces
-        for (let ds of diffSuits) {
-            playableList.push(ds+valAddOne.toString())
-            playableList.push(ds+valLessOne.toString())
-        }
+        const valAddOne = val + 1 == 14 ? 1 : val + 1
+        const valLessOne = val - 1 == 0 ? 13 : val - 1 
+        const addOneId = Object.keys(GameController.faceToValMap).find(key => GameController.faceToValMap[key] === valAddOne);
+        const lessOneId = Object.keys(GameController.faceToValMap).find(key => GameController.faceToValMap[key] === valLessOne);
+        const valId = Object.keys(GameController.faceToValMap).find(key => GameController.faceToValMap[key] === val);
 
         for (let ss of sameSuits) {
-            playableList.push(ss+val.toString())
+            playableList.push(ss+addOneId)
+            playableList.push(ss+lessOneId)
+        }
+
+        for (let ds of diffSuits) {
+            playableList.push(ds+valId)
         }
         return playableList
         // every car has 6 cards that can be played on it
@@ -211,7 +311,7 @@ class Pile {
     recieveCard (card) {
         this.card = card
         this.count +=1
-        this.playable = this.getPlayable(card)
+        this.playableIds = this.getPlayable(this.card)
         if (this.count == this.lockCount) {
             this.position = 'locked'
         } 
@@ -225,6 +325,11 @@ class Player {
         this.connected = player.connected
         this.handShown = new Hand(true)
         this.handHidden = new Hand(false)
+        this.finalScore = {
+            'shownHandCount':null,
+            'hiddenHandCount':null
+        }
+        this.active = true
     }
 
 }

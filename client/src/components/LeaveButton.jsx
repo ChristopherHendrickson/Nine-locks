@@ -8,9 +8,7 @@ const LeaveButton = ({ socket, user } ) =>{
     }
 
     return (
-        <div className="leave-btn">
-            <button onClick={handleLeave}>Leave Game</button>
-        </div>
+            <button className="leave-btn btn-space" onClick={handleLeave}>Leave Game</button>
     )
 }
 

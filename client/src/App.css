@@ -62,8 +62,6 @@ body {
     align-self: center;
     justify-self: center;
     max-height: 11vh;
-    max-width: 
-
 }
 
 .selected { 
@@ -218,8 +216,67 @@ body {
     margin: auto;
 }
 
-.deck {
+.shader {
+    position:absolute;
+    width:80%;
+    height:100%;
+    background-color: black;
+    opacity: 0.6;
+    z-index:10;
+}
 
+.lifter {
+    height:80px;
+}
+
+.minimise, .minimisereduce {
+    position: relative;
+    margin:20px;
+    width:30px;
+    height:30px;
+    background-image: url('./lib/misc/minimise.png');
+    background-size: cover;
+    border-radius: 5px;
+}
+
+.minimisereduce {
+    margin:5px;
+}
+
+.win-panel {
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position:absolute;
+    height:40vh;
+    width:40vw;
+    background-color: rgb(167, 162, 162);
+    text-align: center;
+    margin:auto;
+    left:10px;
+    right:10px;
+    top:10px;
+    bottom:10px;
+    z-index:11;
+    border-radius: 20px;
+    font-size: 40px;
+}
+
+.win-panel p {
+    margin:0;
+}
+
+.reduce {
+    height:40px;
+    width:40px;
+    margin: 0;
+    border-radius: 5px;
+}
+
+
+
+.btn-space{
+    margin:0 5px
 }
 /* CHAT */
 

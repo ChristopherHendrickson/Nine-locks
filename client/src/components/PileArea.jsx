@@ -1,7 +1,7 @@
 import cardBack from './../lib/cards/0.png'
 import lock from './../lib/misc/lock.png'
 
-const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePile, isTurn, pilesOnly, usingKey }) =>{
+const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePile, handlePlayCard, isTurn, pilesOnly, usingKey }) =>{
 
 
     const Pickup = () => {
@@ -12,28 +12,28 @@ const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePi
         if (pilesOnly) {
             handleChangePile(i)
         } else {
-            // playcard
-            return
+            // player is attempting to play the card.
+            // piles are only playable if selectedCard is not null, so dont need to check for selectedCard
+            handlePlayCard(i)
         }
     }
+
+    
+
 
     return (
         <>
         <div className="board-center">
             <div className="pile-area">
                 {piles.map((pile,i)=>{
+                    
                     let disabled = !isTurn || pile.position!='unlocked' || !pile.playableIds.includes(selectedCard)
                     
                     const onlyFlipping = piles.filter((pile)=>{
                         return pile.position=='facedown'
                     }).length > 0
-
+                    
                     if (pilesOnly && isTurn) {
-                        // if (onlyFlipping && !usingKey) {
-                        //     disabled = pile.position!=='facedown'
-                        // } else if  {
-                        //     disabled = false
-                        // } else
                         if (usingKey) {
                             disabled = false
                         } else if (onlyFlipping) {

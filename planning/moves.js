@@ -9,9 +9,11 @@
 // if victor, the game ends and displays the winner
 
 // 9's are a special case for end turn, as they can unexpectedly cause someones turn to contiune
-// if a player flips a game pile and it is a 9 they can use the effect, therefore the gameController
+// eg if a player flips a game pile and it is a 9 they can use the key effect, therefore the gameController
 // will overrule the endturn boolean in that case
 
+// There are several other cases where the endTurn is overwritted:
+//      if all piles are already unlocked on pickup, the player cannot unlock a pile and the turn ends
 
 // player object refers to the user object containing id and username props
 
@@ -33,6 +35,7 @@ const pickup = {
 const changePile = { // locks / unlocks / flips the selected pile, depending on current pile status
     'type':'changePile',
     'room_id':'room_id',
+    'pileIndex':2,
     'player':'player object',
     'endTurn':false
 }
@@ -40,8 +43,8 @@ const changePile = { // locks / unlocks / flips the selected pile, depending on 
 const playCard = {
     'type':'playCard',
     'room_id':'room_id',
+    'CardId':'s4',
     'player':'player object',
-    'victor':false,
     'endTurn':false
 }
 

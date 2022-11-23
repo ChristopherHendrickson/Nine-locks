@@ -148,10 +148,10 @@ def kick(data):
     kicked_user = data.get('user')
     print(socket.sid_map)
     for sid,val in socket.sid_map.items():
-        print(sid,val)
-        if val.get('user').get('id')==kicked_user.get('id'):
-            socket.emit('error',{'status':403,'message':'You Were Kicked By The Host'},to=sid)
-            break
+        if val.get('user'):
+            if val.get('user').get('id')==kicked_user.get('id'):
+                socket.emit('error',{'status':403,'message':'You Were Kicked By The Host'},to=sid)
+                break
 
     
 

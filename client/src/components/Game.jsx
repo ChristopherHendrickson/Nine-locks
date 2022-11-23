@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom"
 import GameController from "../lib/GameController/GameController" 
 import PlayerArea from "./PlayerArea"
 import PileArea from "./PileArea"
+import Winner from "./Winner"
 
 import card_back from '../lib/cards/0.png'
 
@@ -22,12 +23,24 @@ const Game = ({ user, socket, currentRoom }) => {
     const [usingKey, setUsingKey] = useState(false)
     const [selectedCard,setSelectedCard] = useState(null)
     const [pilesOnly,setPilesOnly] = useState(false)
+    const [winner,setWinner] = useState(null)
     socket.on('init_game', (data) => {
         console.log('RECIEVED GAME INIT')
         const init_deck = data.init_deck
         const _players = data.players
         _players.forEach((p)=>p.connected=true)
-        setGameController(new GameController({ "init_deck":init_deck,"players":_players,"setPlayers":setPlayers,"setPiles":setPiles,"setDeck":setDeck,"setIsTurn":setIsTurn,"user":user,"setPilesOnly":setPilesOnly,"setUsingKey":setUsingKey }))
+        setGameController(new GameController({ 
+            "init_deck":init_deck,
+            "players":_players,
+            "setPlayers":setPlayers,
+            "setPiles":setPiles,
+            "setDeck":setDeck,
+            "setIsTurn":setIsTurn,
+            "user":user,
+            "setPilesOnly":setPilesOnly,
+            "setUsingKey":setUsingKey,
+            "setWinner":setWinner
+        }))
     })
 
     useEffect(()=>{
@@ -46,15 +59,16 @@ const Game = ({ user, socket, currentRoom }) => {
         }
     },[gameController])
 
-    const handleSelect = (card_id) => {
-        if (selectedCard == card_id) {
+    const handleSelect = (cardId) => {
+        if (selectedCard == cardId) {
             setSelectedCard(null)
         } else {
-            setSelectedCard(card_id)
+            setSelectedCard(cardId)
         }
     }
 
     const handlePickup = () => {
+        setSelectedCard(null)
         setIsTurn(false) //this gets unset in gameController depending if it is their turn
         socket.emit('move',{
             'type':'pickup',
@@ -65,6 +79,7 @@ const Game = ({ user, socket, currentRoom }) => {
     }
 
     const handleChangePile = (i) => {
+        setSelectedCard(null)
         setIsTurn(false)
         socket.emit('move',{
             'type':'changePile',
@@ -75,10 +90,29 @@ const Game = ({ user, socket, currentRoom }) => {
         })
     }
 
+    const handlePlayCard = (i) => {
+        setIsTurn(false)
+        setSelectedCard(null)
+        console.log('emitting playcard case')
+        socket.emit('move',{
+            'type':'playCard',
+            'room_id':currentRoom,
+            'cardId':selectedCard,
+            'pileIndex':i, 
+            'player':user,
+            'endTurn':true
+        })
+    }
+
+    useEffect(()=>{
+        console.log('i am state', piles)
+    },[selectedCard])
+
     return (
         <>
             <div className="game-grid">
-                <PileArea piles={piles} selectedCard={selectedCard} pilesOnly={pilesOnly} deckCount={deck} handlePickup={handlePickup} handleChangePile={handleChangePile} isTurn={isTurn} usingKey={usingKey}></PileArea>
+                <PileArea piles={piles} selectedCard={selectedCard} pilesOnly={pilesOnly} deckCount={deck} handlePickup={handlePickup} handleChangePile={handleChangePile} isTurn={isTurn} usingKey={usingKey} handlePlayCard={handlePlayCard}></PileArea>
+                
                 {players.map((player,i)=>{
                     if (players.length==2 && i == 1) {
                         i++
@@ -86,6 +120,9 @@ const Game = ({ user, socket, currentRoom }) => {
                     return <PlayerArea key={player.id} pilesOnly={pilesOnly} player={player} gridNumber={i} isUsersHand={user.id==player.id} isTurn={isTurn} handleSelect={handleSelect} selectedCard={selectedCard}></PlayerArea>
                 })}
 
+                {winner &&
+                    <Winner player={{ winner }} user={user} socket={socket}></Winner>
+                }
 
             </div>
             
@@ -93,27 +130,7 @@ const Game = ({ user, socket, currentRoom }) => {
 
 
 
-            {/* {players.map((p)=>{
-                return (
-                    <>
-                    <p key={p.id}>{p.username} - {p.connected ? 'connected':'disconnected'}</p>
-
-                    </>
-                )
-            })}
-            {players.map((p)=>{
-                const shownCards = []
-                const hiddenCards = []
-                p.handShown.forEach((card)=>{
-                    shownCards.push(<img src={card.image}></img>)
-                })
-                p.handHidden.forEach((card)=>{
-                    hiddenCards.push(<img src={card.image}></img>)
-                })
-                return [shownCards,hiddenCards,<br></br>] 
-                
-            })}
-            <LeaveButton user={user} socket={socket}></LeaveButton> */}
+            {/*<LeaveButton user={user} socket={socket}></LeaveButton> */}
         
         </>
     )

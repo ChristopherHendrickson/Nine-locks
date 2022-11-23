@@ -3,11 +3,11 @@ import cardBack from './../lib/cards/0.png'
 const PlayerArea = ({ player, gridNumber, isUsersHand, isTurn, handleSelect, selectedCard, pilesOnly }) =>{
 
 
-    const handleClick = (card_id) => {
-        console.log(card_id)
-        handleSelect(card_id)
+    const handleClick = (cardId) => {
+        console.log(cardId)
+        handleSelect(cardId)
     }
-    let disabled = !isTurn || !isUsersHand || pilesOnly
+    let disabled = !isUsersHand 
     return (
         <>
         <div className={`player-area-${gridNumber}`}>
