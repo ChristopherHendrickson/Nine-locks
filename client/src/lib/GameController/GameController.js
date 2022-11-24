@@ -34,19 +34,30 @@ class GameController {
             }
             this.players.push(newPlayer)
         }
+        this.whosTurn = this.players[0].id
     }
 
     playerLeft(player) {
-
         //updating game controller players
         const dcdPlayer = this.players.filter((p)=>{
             return p.id === player.id
         })
-        if (dcdPlayer) {
+        if (dcdPlayer.length>0) {
             dcdPlayer[0].connected = false
+            console.log(dcdPlayer)
+            console.log(this.whosTurn)
+            if (dcdPlayer[0].id===this.whosTurn) {
+                console.log('player turn dcd')
+                this.move({
+                    'type':'disconnect',
+                    'player':dcdPlayer,
+                    'endTurn':true
+                })
+            }
         } else {
             console.log('-------ERROR: recieved player disconnect but player was not found in current game-------')
         }
+        
         this.playersToState()
 
         
@@ -113,10 +124,12 @@ class GameController {
                         }
 
                     }
-                    
                     this.setIsTurn(this.players[nextPlayerIndex].id===this.user.id)
+                    this.whosTurn=(this.players[nextPlayerIndex].id) //set for game controller
+
             } else {
-                this.setIsTurn(_move.player.id===this.user.id) //retain turn for current player
+                this.setIsTurn(_move.player.id===this.user.id) //set for state
+                this.whosTurn=(_move.player.id) //set for game controller
             }
         }
 
@@ -186,8 +199,12 @@ class GameController {
                     }
                 } else if (pile.position==='locked') {
                     pile.position='unlocked'
+                    this.setUsingKey(false)
+                    this.setPilesOnly(false)
                 } else {
                     pile.position='locked'
+                    this.setUsingKey(false)
+                    this.setPilesOnly(false)
                 }
 
                 
@@ -232,6 +249,7 @@ class GameController {
                 if (player.handShown.cards.length === 0) {
                     this.setWinner([player.username])
                     this.setIsTurn(false)
+                    this.whosTurn=null
                 } else {
                     updateTurn(move)
                 }
@@ -285,7 +303,8 @@ class GameController {
                     updateTurn(move)
                 }
                 break
-
+            case 'disconnect':
+                updateTurn(move)
             default:
                 return
         }
@@ -329,7 +348,7 @@ class Pile {
         this.position = 'facedown'
         this.count = 1
         this.playableIds = this.getPlayable(this.card) 
-        this.lockCount = 4
+        this.lockCount = 5
     }
 
     getPlayable (card) {

@@ -5,7 +5,9 @@ body {
 
 
 
-
+p {
+    font-family: 'Josefin Sans', sans-serif;
+}
 
 .main {
     display: grid;
@@ -21,9 +23,22 @@ body {
 }
 
 .hand-shown {
+    background-color:  rgb(131, 108, 5);
+    border: 5px solid  rgb(131, 108, 5);
+    border-radius: 6px;
+}
+
+.hand-hidden {
     background-color:  rgb(30, 51, 33);
     border: 5px solid  rgb(30, 51, 33);
     border-radius: 6px;
+}
+
+.hand-hidden, .hand-shown {
+    display: flex;
+    align-content: center;
+    max-width: 35em;
+
 }
 
 .hand-wrap {
@@ -34,12 +49,7 @@ body {
     overflow: visible;
 }
 
-.hand-hidden, .hand-shown {
-    display: flex;
-    align-content: center;
-    max-width: 35em;
 
-}
 
 .card-btn {
     padding:0;
@@ -207,8 +217,8 @@ body {
     grid-template-rows: repeat(3,1fr);
     margin: auto;
     grid-gap: 2px;
-    background-color:  rgb(30, 51, 33);
-    border: 5px solid  rgb(30, 51, 33);
+    /* background-color:  rgb(30, 51, 33);
+    border: 5px solid  rgb(30, 51, 33); */
     border-radius: 6px;
 }
 
@@ -226,13 +236,15 @@ body {
     border-radius: 3px;
 }
 
+/* WINNER PANEL STYLES */
+
 .shader {
     position:absolute;
     width:80%;
     height:100%;
     background-color: black;
     opacity: 0.6;
-    z-index:10;
+    z-index:9;
 }
 
 .lifter {
@@ -288,6 +300,63 @@ body {
 .btn-space{
     margin:0 5px
 }
+
+
+/* GAME INFO STYLES */
+
+.game-info { 
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position:absolute;
+    right:21%;
+    top:10px;
+    z-index:10;
+    height:fit-content
+}
+
+.info {
+    margin:5px;
+    background-color: rgb(211, 189, 189);
+    font-size: 18px;
+    min-width: 180px;
+    max-width: 180px;
+    border-radius: 10px;
+    box-shadow: rgba(12, 37, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.leaver {
+    background-color: rgb(167, 95, 95);
+}
+
+.info p {
+    margin:5px;
+    margin-left:10px;
+    
+}
+
+.glow {
+	transform: scale(1);
+	animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+	}
+
+	70% {
+		transform: scale(1);
+		box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+}
+
 /* CHAT */
 
 
@@ -306,7 +375,9 @@ body {
 
 
 #messages{
+    box-sizing: border-box;
     margin:0;
+    padding-top:50px;
     position:relative;
     padding-left: 0px;
     height:94vh;

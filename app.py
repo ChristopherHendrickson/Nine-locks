@@ -64,7 +64,7 @@ def disconnect():
             for u in users_to_kick:
                 print('kickinh user',u[1]['username'])
                 socket.emit('user_left',u[1],to=u[0]) #kick all users in the room if the host leaves
-                socket.emit('error',{'status':404,'message':'Game Closed - Host Disconnected'},to=u[0])
+                socket.emit('connection_error',{'status':404,'message':'Game Closed - Host Disconnected'},to=u[0])
     
     socket.sid_map.pop(sid)
 
@@ -88,11 +88,11 @@ def join(data):
 
 
     elif not socket.hosted_rooms.get(room_id):
-        socket.emit('error',{'status':404,'message':'Room Not Found'},to=sid)
+        socket.emit('connection_error',{'status':404,'message':'Room Not Found'},to=sid)
         return    
 
     elif socket.hosted_rooms.get(room_id).get('started'):
-        socket.emit('error',{'status':403,'message':'Can Not Join. Game Is In Progress'},to=sid)
+        socket.emit('connection_error',{'status':403,'message':'Can Not Join. Game Is In Progress'},to=sid)
         return
 
     existing_users = [u['user'] for u in socket.sid_map.values() if u['room_id']==room_id]
@@ -109,9 +109,9 @@ def check_room_hosted(data):
     print('hitting check room hosted')
     if not socket.hosted_rooms.get(room_id):
         print('room not hosted')
-        socket.emit('error',{'status':404,'message':'Room Not Found'},to=sid)   
+        socket.emit('connection_error',{'status':404,'message':'Room Not Found'},to=sid)   
     elif socket.hosted_rooms.get(room_id).get('started'):
-        socket.emit('error',{'status':403,'message':'Can Not Join. Game Is In Progress'},to=sid)      
+        socket.emit('connection_error',{'status':403,'message':'Can Not Join. Game Is In Progress'},to=sid)      
     else:
         socket.emit('hosted_confirmation',{'status':200,'room_id':room_id},to=sid)
         
@@ -138,7 +138,7 @@ def leave(data):
         for u in users_to_kick:
             print('kicking user',u[1]['username'])
             socket.emit('user_left',u[1],to=u[0]) #kick all users in the room if the host leaves
-            socket.emit('error',{'status':403,'message':'Game Disbanded By Host'},to=u[0])
+            socket.emit('connection_error',{'status':403,'message':'Game Disbanded By Host'},to=u[0])
             # Users that are kicked will fire their own emit to 'leave', and disconnect from the socket room
 
     socket.sid_map[sid] = {'room_id':None,'user':None}
@@ -150,7 +150,7 @@ def kick(data):
     for sid,val in socket.sid_map.items():
         if val.get('user'):
             if val.get('user').get('id')==kicked_user.get('id'):
-                socket.emit('error',{'status':403,'message':'You Were Kicked By The Host'},to=sid)
+                socket.emit('connection_error',{'status':403,'message':'You Were Kicked By The Host'},to=sid)
                 break
 
     

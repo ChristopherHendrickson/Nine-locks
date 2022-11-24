@@ -47,8 +47,8 @@ const PileArea = ({ piles, selectedCard, deckCount, handlePickup, handleChangePi
                         
 
                         <div className={`pile`} key={pile.card.id}>
-                            <button onClick={()=>handlePileClick(i)} className='card-btn' disabled={disabled}>
-                                <img className="card-img" src={pile.position!='facedown' ? pile.card.image : cardBack}></img>
+                            <button onClick={()=>handlePileClick(i)} className={`card-btn ${!disabled? 'glow':''}`} disabled={disabled}>
+                                <img className={`card-img `} src={pile.position!='facedown' ? pile.card.image : cardBack}></img>
                                 {pile.position=='locked' ? <img className='lock' src={lock}></img> : <></>}
                             </button>
                         </div>

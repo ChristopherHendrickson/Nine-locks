@@ -6,7 +6,7 @@ import Chat from './Chat'
 import Game from './Game'
 
 
-const Main = ({user, setUser, msg, sendMessage, socket}) =>{
+const Main = ({user, setUser, socket}) =>{
     
     const { game_id } = useParams()
     const navigate = useNavigate()

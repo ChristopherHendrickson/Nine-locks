@@ -4,7 +4,7 @@ import GameController from "../lib/GameController/GameController"
 import PlayerArea from "./PlayerArea"
 import PileArea from "./PileArea"
 import Winner from "./Winner"
-
+import GameInfo from "./GameInfo"
 
 
 const Game = ({ user, socket, currentRoom }) => {
@@ -21,6 +21,7 @@ const Game = ({ user, socket, currentRoom }) => {
     const [pilesOnly,setPilesOnly] = useState(false)
     const [winner,setWinner] = useState(null)
     const [noMoves,setNoMoves] = useState(false)
+    const [gameInfo,setGameInfo] = useState([])
 
     socket.on('init_game', (data) => {
         setIsTurn(user.id == currentRoom)
@@ -68,7 +69,13 @@ const Game = ({ user, socket, currentRoom }) => {
             gameController.move({type:'init'})
 
             socket.on('user_left', (user_left) => {
-                gameController.playerLeft(user_left)                
+                gameController.playerLeft(user_left)
+                console.log('user left')
+                setGameInfo([...gameInfo,`${user_left.username} Left the game.\n`])
+                setTimeout(() => {
+                    setGameInfo([...gameInfo].slice(0,gameInfo.length))
+                }, 6000);
+
             })
             socket.on('move', (data)=>{
                 gameController.move(data)
@@ -137,18 +144,16 @@ const Game = ({ user, socket, currentRoom }) => {
                 {winner &&
                     <Winner winner={ winner } user={user} socket={socket}></Winner>
                 }
-                <span>
-                <p>no moves {noMoves.toString()}</p>
-                <p>is turn {isTurn.toString()}</p>
-                <p>{winner}</p>
-                </span>
+                
+                <GameInfo isTurn={isTurn} gameInfo={gameInfo} noMoves={noMoves} pilesOnly={pilesOnly} usingKey={usingKey} piles={piles}></GameInfo>
+                
             </div>
             
 
 
 
 
-            {/*<LeaveButton user={user} socket={socket}></LeaveButton> */}
+            {/* <LeaveButton user={user} socket={socket}></LeaveButton> */}
         
         </>
     )

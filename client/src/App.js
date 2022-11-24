@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import Landing from './components/Landing'
 import Main from './components/Main'
 import { Routes, Route, useNavigate } from 'react-router-dom'
+
 import './App.css';
+
 
 import io from 'socket.io-client';
 const socket = io()
@@ -48,9 +50,8 @@ function App() {
       navigate(`/${data.room_id}`)
     })
 
-    socket.on('error', (data) => {
+    socket.on('connection_error', (data) => {
       if (data.status == 404 || data.status == 403) {
-
         setErrorMessage(data.message)
         navigate('/')
       }

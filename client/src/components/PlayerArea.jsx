@@ -4,7 +4,6 @@ const PlayerArea = ({ player, gridNumber, isUsersHand, handleSelect, selectedCar
 
 
     const handleClick = (cardId) => {
-        console.log(cardId)
         handleSelect(cardId)
     }
     let disabled = !isUsersHand 

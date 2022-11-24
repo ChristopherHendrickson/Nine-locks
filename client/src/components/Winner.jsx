@@ -21,9 +21,9 @@ const Winner = ({ winner, user, socket }) => {
         <>
         <div className="shader">
         </div>
-        <div className={`win-panel ${size==0 ? 'reduce' : ''}`}>
-            <button onClick={reduce} className={`minimise${size==0 ? 'reduce' : ''}`}></button>
-            {size == 1 ?  
+        <div className={`win-panel ${size===0 ? 'reduce' : ''}`}>
+            <button onClick={reduce} className={`minimise${size===0 ? 'reduce' : ''}`}></button>
+            {size === 1 ?  
             <>
                 <div>
                 <p>{winnersString} Won!</p>
