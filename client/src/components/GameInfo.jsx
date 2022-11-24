@@ -7,7 +7,7 @@ const GameInfo = ({ isTurn, noMoves, gameInfo, pilesOnly, usingKey, piles }) => 
 
     let turnInstruction
     if (usingKey) {
-        turnInstruction = 'Unlock a Pile with your key' 
+        turnInstruction = 'Lock, Unlock, or Flip a pile with your key' 
     } else if (pilesOnly && onlyFlipping) {
         turnInstruction = 'Reveal a Pile' 
     } else if (pilesOnly) {
@@ -22,7 +22,7 @@ const GameInfo = ({ isTurn, noMoves, gameInfo, pilesOnly, usingKey, piles }) => 
         <div className="game-info">
          {isTurn && 
             <div className='info glow'>
-                <p>It is your turn.</p>
+                <p><strong>It is your turn</strong></p>
                 <p><em>{turnInstruction}</em></p>
             </div>
          }

@@ -37,12 +37,16 @@ const JoinGame = ({user, setUser, socket}) =>{
 
     return (
         <>
-            <form onSubmit={setNameAndJoinGame}>
-                <input id="username" type='text' onChange={handleChange} name='username' value={username} maxLength={15} required></input>
+        <div className='hover-panel'>
+            <h1 className='title'>Nine Locks</h1>
+            <h2>Enter a Username</h2>
+            <form onSubmit={setNameAndJoinGame} autoComplete="off">
+                <input id="username" type='text' onChange={handleChange} placeholder="Username" name='username' value={username} maxLength={15} required></input>
                 <br/>
-                <input type='submit' value='Join Game'></input>
+                <input type='submit' className='btn-landing' value='Join Game'></input>
             </form>
             <div></div>
+            </div>
         </>
     )
 }

@@ -158,6 +158,7 @@ def kick(data):
 
 @socket.on('start_game')
 def start_game(data):
+    print('start game')
     room_id = data['room_id']
     socket.emit('start_game',to=room_id)
     socket.hosted_rooms.get(room_id)['started']=True

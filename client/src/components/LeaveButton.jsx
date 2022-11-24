@@ -1,14 +1,14 @@
 
 
 
-const LeaveButton = ({ socket, user } ) =>{
+const LeaveButton = ({ socket, user, style } ) =>{
 
     const handleLeave = () => {
         socket.emit("leave", {current_user:user})
     }
 
     return (
-            <button className="leave-btn btn-space" onClick={handleLeave}>Leave Game</button>
+            <button className={`${style} btn-leave`} onClick={handleLeave}>Leave Game</button>
     )
 }
 

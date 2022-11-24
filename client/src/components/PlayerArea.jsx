@@ -10,6 +10,9 @@ const PlayerArea = ({ player, gridNumber, isUsersHand, handleSelect, selectedCar
     return (
         <>
         <div className={`player-area-${gridNumber}`}>
+            <div className={`player-info-${gridNumber}`}>
+                <p className="player-name">{player.username}{player.connected ? '' : ' \n (disconnected)'}</p>
+            </div>
             <div className="hand-shown">
                 {player.handShown.map((card)=>{
                     const selected = selectedCard == card.id ? 'selected' : ''
@@ -37,9 +40,7 @@ const PlayerArea = ({ player, gridNumber, isUsersHand, handleSelect, selectedCar
 
 
         </div>
-        <div className={`player-info-${gridNumber}`}>
-            <p className="player-name">{player.username}</p>
-        </div>
+
         </>
     )
 

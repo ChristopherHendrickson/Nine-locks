@@ -37,6 +37,7 @@ const Game = ({ user, socket, currentRoom }) => {
         const init_deck = data.init_deck
         const _players = data.players
         _players.forEach((p)=>p.connected=true)
+        console.log(init_deck)
         setGameController(new GameController({ 
             "init_deck":init_deck,
             "players":_players,
@@ -71,7 +72,7 @@ const Game = ({ user, socket, currentRoom }) => {
             socket.on('user_left', (user_left) => {
                 gameController.playerLeft(user_left)
                 console.log('user left')
-                setGameInfo([...gameInfo,`${user_left.username} Left the game.\n`])
+                setGameInfo([...gameInfo,`${user_left.username} Left the game.`])
                 setTimeout(() => {
                     setGameInfo([...gameInfo].slice(0,gameInfo.length))
                 }, 6000);
@@ -115,8 +116,9 @@ const Game = ({ user, socket, currentRoom }) => {
     }
 
     const handlePlayCard = (i) => {
+        console.log(selectedCard,'selectedCard in state')
         setIsTurn(false)
-        setSelectedCard(null)
+
         socket.emit('move',{
             'type':'playCard',
             'room_id':currentRoom,
@@ -125,6 +127,7 @@ const Game = ({ user, socket, currentRoom }) => {
             'player':user,
             'endTurn':true
         })
+        setSelectedCard(null)
     }
 
 
@@ -153,7 +156,7 @@ const Game = ({ user, socket, currentRoom }) => {
 
 
 
-            {/* <LeaveButton user={user} socket={socket}></LeaveButton> */}
+            <LeaveButton user={user} socket={socket} style={'leave-game'}></LeaveButton>
         
         </>
     )

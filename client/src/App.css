@@ -1,9 +1,16 @@
 body {
     background-color: rgb(61, 80, 63);
+    background-image: url('../src/lib/misc/background.jpg');
+    background-size: cover;
+    font-family: helvetica, arial, sans-serif;
 }
 
+input, textarea, select { font-family:inherit; }
 
-
+h1 {
+    font-size: 50px;
+    margin-top:0;
+}
 
 p {
     font-family: 'Josefin Sans', sans-serif;
@@ -14,6 +21,10 @@ p {
     grid-template-columns: 80% 20%;
 }
 
+.title {
+    font-family: 'Slackey', cursive;
+}
+
 .main-content {
     grid-column: 1/2 ;
 }
@@ -22,34 +33,147 @@ p {
     grid-column: 2/3;
 }
 
-.hand-shown {
-    background-color:  rgb(131, 108, 5);
-    border: 5px solid  rgb(131, 108, 5);
-    border-radius: 6px;
+#code {
+    color:white;
+    /* text-decoration: underline; */
+}
+.hover-panel {
+    position: absolute;
+    left:0;
+    right:0;
+    top:10%;
+    margin:auto;
+    width:400px;
+    height:fit-content;
+    background-color: rgba(16, 41, 18, 0.86);
+    text-align: center;
+    padding:50px 100px;
+    border-radius: 20px;
+    box-shadow: rgba(8, 26, 0, 0.5) 5px 10px 20px, rgba(0, 0, 0, 0.6) 5px 10px 10px, rgba(0, 0, 0, 0.6) 0px 10px 20px;
 }
 
-.hand-hidden {
-    background-color:  rgb(30, 51, 33);
-    border: 5px solid  rgb(30, 51, 33);
-    border-radius: 6px;
+.btn-landing {
+    width: 85%;
+    border: 0;
+    border-radius: 10px;
+    background-color: rgb(26, 119, 0);
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    margin:12px auto;
+
 }
 
-.hand-hidden, .hand-shown {
+.btn-leave { 
+    border: 0;
+    border-radius: 10px;
+    background-color: rgb(93, 94, 93);
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    margin:12px auto;
+    cursor: pointer;
+}
+
+.leave-lobby {
+    width: 85%;
+}
+
+.leave-game {
+    cursor: pointer;
+    position:absolute;
+    right:10px;
+    font-size: 12px;
+    width:fit-content;
+    padding:5px;
+    border-radius: 0;
+    z-index: 1;
+}
+
+#landing-error {
+    color: rgb(126, 32, 3);
+    font-size: 24px;
+    margin-bottom: 0;
+}
+
+input[type=text] {
+    box-sizing: border-box;
+    height:2rem;
+    width:340px;
+    justify-self: center;
+    margin:auto;
+    background-color: rgb(163, 162, 162);
+    border-radius: 10px;
+    padding:0px 10px;
+
+}
+
+.small-img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.flex-col {
     display: flex;
-    align-content: center;
-    max-width: 35em;
-
+    flex-direction: column;
 }
 
-.hand-wrap {
-    overflow: hidden;
+.flex-row {
+    display: flex;
+    flex-direction: row;
 }
 
-.hand-wrap:last-child {
-    overflow: visible;
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: space-between;
+}
+
+.lobby-players {
+    list-style-type: none;
+    padding:0;
+    margin: 10px;
+    
+}
+
+.lobby-players li {
+    display: flex;
+    justify-content: space-between;
+    margin:0 0 10px 0;
+    border:1px solid green;
+    background-color: rgb();
+    height:3rem;
+    line-height: 3rem;
+    background-color: rgb(112, 136, 84);
+    padding-left: 20px;
+    font-weight: 600;
+    border-radius: 10px;
 }
 
 
+
+.kick-btn, .btn-copy {
+    background-color: rgba(16, 41, 18);
+    height: 50%;
+    width:60px;
+    margin:auto 10px;
+    color: rgb(160, 160, 160);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-copy {
+    width:250px;
+}
+
+.btn-copy:active {
+    background-color: rgb(112, 136, 84);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+/* CARDS */
 
 .card-btn {
     padding:0;
@@ -86,13 +210,43 @@ p {
 
 .game-grid {
     display: grid;
-    grid-template-columns: 2fr 3fr 2fr;
-    grid-template-rows: 2fr 3fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 3fr 4fr 3fr;
     max-width:100%;
     max-height:100%;
 }
 
 /* PLAYER AREAS */
+
+
+.hand-shown {
+    background-color:  rgb(172, 142, 12);
+    border: 3px solid  rgb(172, 142, 12);
+    border-radius: 6px;
+}
+
+.hand-hidden {
+    background-color:  rgb(30, 51, 33);
+    border: 3px solid  rgb(30, 51, 33);
+    border-radius: 6px;
+}
+
+.hand-hidden, .hand-shown {
+    display: flex;
+    align-content: center;
+    max-width: 35em;
+
+}
+
+.hand-wrap {
+    overflow: hidden;
+}
+
+.hand-wrap:last-child {
+    overflow: visible;
+}
+
+
 
 .player-area-0 {
     grid-column: 2/3;
@@ -110,7 +264,7 @@ p {
     grid-row: 2/3;
     display: flex;
     flex-direction:column-reverse;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     margin:0 auto;
     max-width: 80%;
@@ -133,7 +287,7 @@ p {
     grid-row: 2/3;
     display: flex;
     flex-direction:column-reverse;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     margin:0 auto;
     max-width: 80%;
@@ -144,59 +298,10 @@ p {
     margin:0;
     font-weight: 1000;
     font-size: 18px;
-}
-
-.player-info-0 {
-    grid-column: 2/3;
-    grid-row: 3/4;
-    display: flex;
-    justify-content:center;
-    align-items:flex-end;
-    padding:15px;
-    z-index:-1
-}
-
-.player-info-1 {
-    grid-column: 3/4;
-    grid-row: 2/3;
-    display: flex;
-    justify-content:flex-end;
-    align-items:center;
-    padding:15px;
-    z-index:-1
-
-
-}
-.player-info-1 .player-name {
-    transform: rotate(270deg);
+    padding:15px 0;
 }
 
 
-.player-info-2 {
-    grid-column: 2/3;
-    grid-row: 1/2;
-    display: flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:15px;
-    z-index:-1
-
-}
-
-.player-info-3 {
-    grid-column: 1/2;
-    grid-row: 2/3;
-    display: flex;
-    flex-direction:column-reverse;
-    justify-content: center;
-    align-items: flex-start;
-    z-index:-1
-
-}
-
-.player-info-3 .player-name {
-    transform: rotate(90deg);
-}
 
 /* PILE GRID */
 
@@ -204,7 +309,7 @@ p {
     grid-column: 2/3;
     grid-row: 2/3;
     display: grid;
-    grid-template-columns: 150px 1fr 150px;
+    grid-template-columns: 1fr 3fr 1fr;
     
 }
 
@@ -231,8 +336,6 @@ p {
 .deck-area {
     grid-column: 3/4;
     margin: auto;
-    background-color:  rgb(104, 114, 106);
-    border: 5px solid  rgb(104, 114, 106);
     border-radius: 3px;
 }
 
@@ -248,7 +351,7 @@ p {
 }
 
 .lifter {
-    height:80px;
+    height:120px;
 }
 
 .minimise, .minimisereduce {
@@ -259,6 +362,7 @@ p {
     background-image: url('./lib/misc/minimise.png');
     background-size: cover;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .minimisereduce {
@@ -319,8 +423,8 @@ p {
     margin:5px;
     background-color: rgb(211, 189, 189);
     font-size: 18px;
-    min-width: 180px;
-    max-width: 180px;
+    min-width: 200px;
+    max-width: 200px;
     border-radius: 10px;
     box-shadow: rgba(12, 37, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
@@ -343,12 +447,12 @@ p {
 @keyframes pulse {
 	0% {
 		transform: scale(0.95);
-		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.9);
 	}
 
 	70% {
 		transform: scale(1);
-		box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+		box-shadow: 0 0 0 10px rgba(42, 56, 43, 0);
 	}
 
 	100% {
@@ -411,7 +515,7 @@ p {
 
 #message-btn {
     height:20px;
-    width: 25%;
+    width: 20%;
     border: 0;
     background-color: rgb(47, 47, 47);
     color: white;
@@ -442,3 +546,4 @@ p {
 /* .sender {
     color: rgb(165,165,195);
 } */
+

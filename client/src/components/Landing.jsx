@@ -16,7 +16,9 @@ const Landing = ({user, errorMessage, socket }) => {
 
     const joinGame = (e) => {
         e.preventDefault()
-        socket.emit('check_room_hosted',{room_id: fields.room_id})
+        if (fields.room_id) {
+            socket.emit('check_room_hosted',{room_id: fields.room_id})
+        }
     }
 
     const Create = (e) => {
@@ -32,19 +34,19 @@ const Landing = ({user, errorMessage, socket }) => {
 
     return (
         <>
-            
-            <p>Create A New Game!</p>
-            <form onSubmit={Create}>
-                <input type='submit' value='Create Game'></input>
-            </form>
+            <div className='hover-panel'>
+                <h1 className='title'>Nine Locks<img className='small-img'></img></h1>
+                <form onSubmit={Create} autoComplete="off">
+                    <input type='submit' className='btn-landing' value='Create A Game'></input>
+                </form>
 
-            <p>Or.. Join A Game With A Code!</p>
-            <form onSubmit={joinGame}>
-                <input type='text' onChange={handleChange} name='room_id'></input>
-                <br/>
-                <input type='submit' value='Join Game'></input>
-            </form>
-            <p>{errorMessage}</p>
+                <h2>Or Join A Game With A Code</h2>
+                <form className='flex-col flex-center' onSubmit={joinGame} autoComplete="off">
+                    <input type='text' onChange={handleChange} name='room_id' className='join-input' placeholder="Paste Game Code"></input>
+                    <input type='submit' value='Join Game' className="btn-landing" ></input>
+                </form>
+                <p id='landing-error'>{errorMessage}</p>
+            </div>
         </>
     )
 }

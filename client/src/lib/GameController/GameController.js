@@ -44,10 +44,7 @@ class GameController {
         })
         if (dcdPlayer.length>0) {
             dcdPlayer[0].connected = false
-            console.log(dcdPlayer)
-            console.log(this.whosTurn)
             if (dcdPlayer[0].id===this.whosTurn) {
-                console.log('player turn dcd')
                 this.move({
                     'type':'disconnect',
                     'player':dcdPlayer,
@@ -55,7 +52,7 @@ class GameController {
                 })
             }
         } else {
-            console.log('-------ERROR: recieved player disconnect but player was not found in current game-------')
+            
         }
         
         this.playersToState()
@@ -69,6 +66,7 @@ class GameController {
 
     playersToState () {
         const statePlayers = this.players.map((p)=>{
+            console.log(this.players)
             return {
                 'id':p.id,
                 'username':p.username,
@@ -85,6 +83,7 @@ class GameController {
     }
 
     pilesToState () {
+        console.log(this.players)
         const statePiles = this.piles.map((pile)=>{
             return {
                 'card':{
@@ -164,8 +163,8 @@ class GameController {
                 this.pilesToState()
                 break
             case 'pickup':
-                const hand = player.handHidden.cards.length > player.handShown.cards.length ? player.handShown : player.handHidden
-                this.pickup(hand)
+                const recievingHand = player.handHidden.cards.length > player.handShown.cards.length ? player.handShown : player.handHidden
+                this.pickup(recievingHand)
                 this.playersToState()
                 this.deckToState()
 
@@ -228,30 +227,33 @@ class GameController {
                 })
                 const card = cardInHidden || cardInShown
                 console.log(card)
-                _pile.recieveCard(card)
-                player.handShown.cards = player.handShown.cards.filter((card)=>{
-                    return card.id!=cardId
-                })
-                player.handHidden.cards = player.handHidden.cards.filter((card)=>{
-                    return card.id!=cardId
-                })
+                console.log(move)
+                if (card) {
+                    _pile.recieveCard(card)
+                    player.handShown.cards = player.handShown.cards.filter((card)=>{
+                        return card.id!=cardId
+                    })
+                    player.handHidden.cards = player.handHidden.cards.filter((card)=>{
+                        return card.id!=cardId
+                    })
 
-                if (card.value===9) {
- 
-                    move.endTurn=false
-                    this.setUsingKey(true)
-                    this.setPilesOnly(true)
-                }
+                    if (card.value===9) {
+    
+                        move.endTurn=false
+                        this.setUsingKey(true)
+                        this.setPilesOnly(true)
+                    }
 
-                this.pilesToState()
-                this.playersToState()
+                    this.pilesToState()
+                    this.playersToState()
 
-                if (player.handShown.cards.length === 0) {
-                    this.setWinner([player.username])
-                    this.setIsTurn(false)
-                    this.whosTurn=null
-                } else {
-                    updateTurn(move)
+                    if (player.handShown.cards.length === 0) {
+                        this.setWinner([player.username])
+                        this.setIsTurn(false)
+                        this.whosTurn=null
+                    } else {
+                        updateTurn(move)
+                    }
                 }
                 break
 
@@ -337,8 +339,11 @@ class Deck {
     }
 
     draw() {
-        this.count-=1
-        return this.cards.pop()
+        if (this.count > 0) {
+            this.count-=1
+            return this.cards.pop()
+        }
+        return 'i shouldnt be here from deck'
     }
 }
 
