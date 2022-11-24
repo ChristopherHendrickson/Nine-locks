@@ -307,6 +307,7 @@ class GameController {
                 break
             case 'disconnect':
                 updateTurn(move)
+                break
             default:
                 return
         }
