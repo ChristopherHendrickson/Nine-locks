@@ -116,7 +116,7 @@ def leave(data):
         leave_room(room_id)
     
     
-    if room_id == user.get('id'):
+    if room_id and room_id == user.get('id'):
         socket.hosted_rooms.pop(room_id) # Room is no longer hosted
 
         # iterate over all users in game, and tell them host have left, send an error message saying game was closed by host

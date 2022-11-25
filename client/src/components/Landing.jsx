@@ -1,17 +1,25 @@
 import { useState,useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-
+import GameRules from './GameRules'
 
 const Landing = ({user, errorMessage, socket }) => {
     const navigate = useNavigate()
     const [fields, setFields] = useState('')
-    
+    const [showRules,setShowRules] = useState(false)
     const handleChange = (event) => {
         const { name, value } = event.target
         setFields({
           ...fields,
           [name]: value
         })
+    }
+
+    const handleOpen = () =>{
+        setShowRules(true)
+    }
+
+    const handleClose = () => {
+        setShowRules(false)
     }
 
     const joinGame = (e) => {
@@ -45,8 +53,10 @@ const Landing = ({user, errorMessage, socket }) => {
                     <input type='text' onChange={handleChange} name='room_id' className='join-input' placeholder="Paste Game Code"></input>
                     <input type='submit' value='Join Game' className="btn-landing" ></input>
                 </form>
+                <p>First Time Playing? <button onClick={handleOpen} id="btn-open-rules">Read The Game Rules</button></p>
                 <p id='landing-error'>{errorMessage}</p>
             </div>
+            {showRules && <GameRules handleClose={handleClose}></GameRules>}
         </>
     )
 }
