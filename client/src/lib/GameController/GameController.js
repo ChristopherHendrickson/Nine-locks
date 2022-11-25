@@ -153,8 +153,9 @@ class GameController {
         const player = this.players.find((player)=>{
             return player.id === move.player?.id
         })
-
-
+        console.log(player)
+        console.log(move.player)
+        console.log(move)
         switch(move.type) {
             
             case 'init':
