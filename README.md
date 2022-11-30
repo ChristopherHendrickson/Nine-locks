@@ -5,7 +5,8 @@
 * Javascript
 * Node.js
 * React
-* socketio
+* flask_socketio
+* socket.io-client
 * flask
 
 ## About the Project
@@ -71,13 +72,15 @@ When running locally, add multiple players to a game by opening the app on sever
 
 ## General Approach
 
+The game uses socket.io to produce the live updating flow. The general approach of the client communication using the sockets is as shown in the flow chart.
 
-Wireframe:
-
-Matched Users List         | 
+Client/Socket interaction flow     | 
 :-------------------------:|
 ![](./planning/NineLocksGameFlow.png) |
 
+Instances of rooms are handled by adding users to a socket.io room with a specific key when joining a game. When any communication is needed for one specific room, any data from a client includes this room code. When the flask socket recieves anything specific to a room it will transmit the data back to that room only.
+
+When users load the app a request to the backend is made for a uuid, so that each user on the app can be identified without any formal authentication. When creating a room the hosts uuid is used as the room code.
 
 
 ## Nine Locks Rules
