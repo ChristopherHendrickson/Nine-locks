@@ -9,13 +9,12 @@ auth_router = Blueprint(__name__, 'auth')
 @auth_router.route('/api/register/', methods = ['POST'])
 def register():
     username = request.json.get('username')
-    return ('hit')
     id = uuid.uuid4().hex
     user_obj = {
             "username":username,
             "id":id
         }
-    session['current_user'] = user_obj
+    # session['current_user'] = user_obj
     return jsonify({
         "success":"success",
         "message":"Successfully registered",
