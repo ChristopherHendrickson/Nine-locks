@@ -339,6 +339,18 @@ input[type=text] {
 
 .pile {
     margin: auto;
+    position:relative;
+}
+
+.pile-count {
+    opacity: 1;
+    color:rgb(216, 0, 0);
+    position: absolute;
+    font-size: 20px;
+    margin:0;
+    bottom:0;
+    left:8%;
+    
 }
 
 .deck-area {
