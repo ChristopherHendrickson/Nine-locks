@@ -9,7 +9,7 @@ auth_router = Blueprint(__name__, 'auth')
 @auth_router.route('/api/register/', methods = ['POST'])
 def register():
     username = request.json.get('username')
-    print('registering')
+    return ('hit')
     id = uuid.uuid4().hex
     user_obj = {
             "username":username,
