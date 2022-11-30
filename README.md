@@ -42,7 +42,7 @@ flask run --port=5000
 ```
 
 ### Front End Build
-
+In another terminal instance
 to run the app using nodemon, first ensure nodemon is installed. Run:
 ```
 npm install -g nodemon # or using yarn: yarn global add nodemon
