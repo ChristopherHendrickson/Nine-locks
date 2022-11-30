@@ -34,7 +34,7 @@ const GameRules = ({ handleClose }) => {
             <p>
                 If a player can not play a card they must pick up. They can also choose to pickup even if they have playable cards.
                 When picking up the card is placed into the hand with the least number of cards (When it is equal the card goes to the hidden hand)
-                After picking up, the player must then unlock a new pile by revealing a facedown card. Once all cards are face-up, after picking up a player can unlock any locked pile instead (see <em>Pile Locking</em> below).
+                After picking up, the player must then unlock a new pile by revealing a facedown card. Once all cards are face-up, after picking up a player can unlock any locked pile instead.
                 If all cards are already in an unlocked state when a player picks up, their turn immediately ends.
             </p>
             <h4>
