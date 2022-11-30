@@ -76,7 +76,7 @@ Wireframe:
 
 Matched Users List         | 
 :-------------------------:|
-![](./planning/Nine Locks Game Flow.png) |
+![](./planning/NineLocksGameFlow.png) |
 
 
 
