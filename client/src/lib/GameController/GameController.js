@@ -66,7 +66,6 @@ class GameController {
 
     playersToState () {
         const statePlayers = this.players.map((p)=>{
-            console.log(this.players)
             return {
                 'id':p.id,
                 'username':p.username,
@@ -83,7 +82,6 @@ class GameController {
     }
 
     pilesToState () {
-        console.log(this.players)
         const statePiles = this.piles.map((pile)=>{
             return {
                 'card':{
@@ -153,9 +151,6 @@ class GameController {
         const player = this.players.find((player)=>{
             return player.id === move.player?.id
         })
-        console.log(player)
-        console.log(move.player)
-        console.log(move)
         switch(move.type) {
             
             case 'init':
@@ -227,8 +222,6 @@ class GameController {
                     return card.id === cardId
                 })
                 const card = cardInHidden || cardInShown
-                console.log(card)
-                console.log(move)
                 if (card) {
                     _pile.recieveCard(card)
                     player.handShown.cards = player.handShown.cards.filter((card)=>{
@@ -284,7 +277,6 @@ class GameController {
                     })
 
                     if (potentialWinners.length===1) {
-                        console.log('winner',potentialWinners)
                         this.setWinner([potentialWinners[0].username])
                     } else {
                         
@@ -295,14 +287,12 @@ class GameController {
                         const potentialWinners2 = potentialWinners.filter((p)=>{
                             return p.finalScore.handHiddenCount === score2
                         })
-                        console.log('winner',potentialWinners2)
 
                         this.setWinner(potentialWinners2.map((w)=>w.username))
                         
                     }
                     
                 } else {
-                    console.log('updating turn from no move')
                     updateTurn(move)
                 }
                 break
