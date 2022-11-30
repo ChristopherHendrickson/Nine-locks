@@ -33,11 +33,9 @@ const Game = ({ user, socket, currentRoom }) => {
         setPilesOnly(false)
         setWinner(null)
         setNoMoves(false)
-        console.log('RECIEVED GAME INIT')
         const init_deck = data.init_deck
         const _players = data.players
         _players.forEach((p)=>p.connected=true)
-        console.log(init_deck)
         setGameController(new GameController({ 
             "init_deck":init_deck,
             "players":_players,
@@ -71,7 +69,6 @@ const Game = ({ user, socket, currentRoom }) => {
 
             socket.on('user_left', (user_left) => {
                 gameController.playerLeft(user_left)
-                console.log('user left')
                 setGameInfo([...gameInfo,`${user_left.username} Left the game.`])
                 setTimeout(() => {
                     setGameInfo([...gameInfo].slice(0,gameInfo.length))
@@ -116,7 +113,6 @@ const Game = ({ user, socket, currentRoom }) => {
     }
 
     const handlePlayCard = (i) => {
-        console.log(selectedCard,'selectedCard in state')
         setIsTurn(false)
 
         socket.emit('move',{
