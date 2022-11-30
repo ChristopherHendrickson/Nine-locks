@@ -67,8 +67,8 @@ When running locally, add multiple players to a game by opening the app on sever
 ## Features
 * From the home page users can create a new game or join a game with a code
 * A chat is available for the lobby on the right side to communicate with other players.
-* Players can make moves within the game when it is their turn, indicated by the tootip in the top right, by clicking on the cards.
-* Players leaving/disconnecting from the game has been handled to ensure it will not cause issues for remaining players, who can carry on playng. Unless the leaving person was the host in which case the game is disbanded.
+* Players can make moves within the game when it is their turn, indicated by the tooltip in the top right, by clicking on the cards.
+* Players leaving/disconnecting from the game has been handled to ensure it will not cause issues for remaining players, who can carry on playing. Unless the leaving person was the host in which case the game is disbanded.
 
 ## General Approach
 

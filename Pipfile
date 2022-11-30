@@ -10,8 +10,9 @@ flask-sqlalchemy = "*"
 python-dotenv = "*"
 cors = "*"
 flask-cors = "*"
-eventlet = "*"
+eventlet = "==0.30.2"
 flask-socketio = "*"
+gunicorn = "*"
 
 [dev-packages]
 

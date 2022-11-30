@@ -1,10 +1,14 @@
 import os
-from flask import Flask, Blueprint, request, session, abort
+from flask import Flask, Blueprint, request, session, abort, render_template
 from flask_socketio import SocketIO, join_room, leave_room
+import eventlet
 
 
-
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder='client/build/static',
+    template_folder='client/build'
+)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 
@@ -158,3 +162,9 @@ def start_game(data):
 def move(data):
     room_id = data['room_id']
     socket.emit('move',data,to=room_id)
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react_app(path):
+    return render_template('index.html')
