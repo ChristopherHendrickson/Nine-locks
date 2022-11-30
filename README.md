@@ -47,7 +47,7 @@ to run the app using nodemon, first ensure nodemon is installed. Run:
 ```
 npm install -g nodemon # or using yarn: yarn global add nodemon
 ```
-to install nodmeon globally ([ref](npmjs.com/package/nodemon))
+to install nodmeon globally ([ref](/npmjs.com/package/nodemon))
 
 From the client directory. Run:
 ```
