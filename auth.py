@@ -14,7 +14,7 @@ def register():
             "username":username,
             "id":id
         }
-    # session['current_user'] = user_obj
+    session['current_user'] = user_obj
     return jsonify({
         "success":"success",
         "message":"Successfully registered",
